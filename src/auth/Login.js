@@ -22,8 +22,8 @@ const Login = () => {
 
   const navigation = useNavigation()
 
-  const Register = () => {
-    navigation.navigate('HomeScreen')
+  const LoginBTN = () => {
+    navigation.navigate('Register')
   }
 
 
@@ -122,7 +122,7 @@ const Login = () => {
           </View>
           <Text style={styles.forgot}>Forgot Password</Text>
           <View style={{ marginTop: 25 }}>
-            <PurpleBtn style={styles.btn} title='Login' icon="arrow-right" func={Register} />
+            <PurpleBtn style={styles.btn} title='Login' icon="arrow-right" func={LoginBTN} />
           </View>
 
           <View style={styles.parentLine}>
@@ -149,7 +149,7 @@ const Login = () => {
               <Text style={styles.text}>Login with Google</Text>
             </TouchableOpacity> */}
 
-            <Text style={styles.registerHere}>Don’t have any account? <Text onPress={Register}>Register here</Text> </Text>
+            <Text style={styles.registerHere}>Don’t have any account? <Text onPress={LoginBTN}>Register here</Text> </Text>
           </View>
         </View>
       </View>

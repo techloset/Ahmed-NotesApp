@@ -4,7 +4,7 @@ import Icon from 'react-native-vector-icons/FontAwesome6';
 const PurpleBtn = (props) => {
   return (
     <View>
-    <TouchableOpacity onPress={props.func} style={styles.btn}>
+    <TouchableOpacity  style={styles.btn}>
       <Text style={styles.text}>{props.title}</Text>
       <Icon style={styles.icon} name={props.icon} size={30} color={props.color} />
     </TouchableOpacity>
