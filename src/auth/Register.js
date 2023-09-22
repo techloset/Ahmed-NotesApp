@@ -7,6 +7,7 @@ import {
   ScrollView,
   Button,
   TouchableOpacity,
+  ActivityIndicator
 } from 'react-native';
 import React, {useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
@@ -14,24 +15,91 @@ import PurpleBtn from '../components/PurpleBtn';
 import HeaderBack from '../components/HeaderBack';
 // import auth from '@react-native-firebase/auth';
 import Icon from 'react-native-vector-icons/FontAwesome6';
+import IconF from 'react-native-vector-icons/FontAwesome';
+import * as Yup from 'yup';
+import axios from 'axios';
 
 const Register = () => {
+  const navigation = useNavigation();
+
+  const [loading, setloading] = useState(false)
+  const [fieldErrors, setFieldErrors] = useState({
+    name: null,
+    email: null,
+    password: null,
+    confirmPassword: null,
+  });
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
     confirmPassword: '',
   });
-
+  const [showPassword, setShowPassword] = useState(false);
   const handleInputChange = (fieldName, text) => {
-    setFormData({ ...formData, [fieldName]: text });
+    setFormData({...formData, [fieldName]: text});
   };
 
-  const handleRegister = () => {
-    console.log('Name:', formData.name);
-    console.log('Email:', formData.email);
-    console.log('Password:', formData.password);
-    console.log('Confirm Password:', formData.confirmPassword);
+  const handleFieldFocus = fieldName => {
+    // Clear the error message when a field is focused
+    setFieldErrors({...fieldErrors, [fieldName]: null});
+  };
+
+  const validationSchema = Yup.object().shape({
+    name: Yup.string().required('Name is required'),
+    email: Yup.string().email('Invalid email').required('Email is required'),
+    password: Yup.string()
+      .min(6, 'Password must be at least 6 characters')
+      .required('Password is required'),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref('password'), null], 'Passwords must match')
+      .required('Confirm Password is required'),
+  });
+
+  const handleRegister = async () => {
+    try {
+      // Validate the form data against the schema
+      await validationSchema.validate(formData, {abortEarly: false});
+
+      // If validation succeeds, log the form data
+
+      handleSubmit();
+
+      // console.log('Name:', formData.name);
+      // console.log('Email:', formData.email);
+      // console.log('Password:', formData.password);
+      // console.log('Confirm Password:', formData.confirmPassword);
+    } catch (errors) {
+      const errorMessages = {};
+      errors.inner.forEach(error => {
+        errorMessages[error.path] = error.message;
+      });
+      setFieldErrors(errorMessages);
+    }
+  };
+
+  const handleSubmit = async () => {
+    setloading(true)
+    const response = await fetch('http://192.168.50.107:3000/api/user', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+      }),
+    });
+    if (response.ok) {
+      setloading(false)
+      navigation.navigate('CreateNewNotes');
+    } else {
+      console.error('API Error - Status Code:', response.status);
+      const responseText = await response.text();
+      console.error('API Error - Response Text:', responseText);
+      setloading(false)
+    }
   };
 
   return (
@@ -51,48 +119,88 @@ const Register = () => {
           <View style={styles.inputParent}>
             <Text style={styles.lable}>Full Name</Text>
             <TextInput
-               value={formData.name}
-               onChangeText={(text) => handleInputChange('name', text)}
+              value={formData.name}
+              onChangeText={text => handleInputChange('name', text)}
               style={styles.input}
               placeholderTextColor={'#C8C5CB'}
               placeholder="Example: John Doe"
+              onFocus={() => handleFieldFocus('name')}
             />
           </View>
+          {fieldErrors.name && (
+            <Text style={{color: 'red', fontSize: 10}}>{fieldErrors.name}</Text>
+          )}
           <View style={styles.inputParent}>
             <Text style={styles.lable}>Email Address</Text>
             <TextInput
-            value={formData.email}
-            onChangeText={(text) => handleInputChange('email', text)}
+              value={formData.email}
+              onChangeText={text => handleInputChange('email', text)}
               style={styles.input}
               placeholderTextColor={'#C8C5CB'}
               placeholder="Example: johndoe@gmail.com"
+              onFocus={() => handleFieldFocus('email')}
             />
           </View>
+          {fieldErrors.email && (
+            <Text style={{color: 'red', fontSize: 10}}>
+              {fieldErrors.email}
+            </Text>
+          )}
           <View style={styles.inputParent}>
             <Text style={styles.lable}>Password</Text>
             <TextInput
-             value={formData.password}
-             onChangeText={(text) => handleInputChange('password', text)}
+              value={formData.password}
+              onChangeText={text => handleInputChange('password', text)}
               style={styles.input}
               placeholderTextColor={'#C8C5CB'}
               placeholder="********"
+              secureTextEntry={!showPassword}
+              onFocus={() => handleFieldFocus('password')}
             />
+
+            <View style={styles.iconParent}>
+              <TouchableOpacity
+                onPress={() => setShowPassword(!showPassword)}
+                style={styles.eyeIcon}>
+                <IconF
+                  name={showPassword ? 'eye' : 'eye-slash'}
+                  size={20}
+                  color="black"
+                />
+              </TouchableOpacity>
+            </View>
           </View>
+
+          {fieldErrors.password && (
+            <Text style={{color: 'red', fontSize: 10}}>
+              {fieldErrors.password}
+            </Text>
+          )}
           <View style={styles.inputParent}>
             <Text style={styles.lable}>Retype Password</Text>
             <TextInput
               secureTextEntry={true}
               value={formData.confirmPassword}
-              onChangeText={(text) => handleInputChange('confirmPassword', text)}
+              onChangeText={text => handleInputChange('confirmPassword', text)}
               style={styles.input}
               placeholderTextColor={'#C8C5CB'}
               placeholder="********"
+              onFocus={() => handleFieldFocus('confirmPassword')}
             />
           </View>
+          {fieldErrors.confirmPassword && (
+            <Text style={{color: 'red', fontSize: 10}}>
+              {fieldErrors.confirmPassword}
+            </Text>
+          )}
+
           <View style={{marginTop: 25}}>
             <View>
-              <TouchableOpacity onPress={handleRegister} style={styles.btn}>
-                <Text style={styles.text}>Register</Text>
+              <TouchableOpacity onPress={handleRegister} disabled={loading} style={[styles.btn, loading && styles.btndisable]}>
+                <Text style={styles.text}>
+                  
+                  {loading ? ( <>Loading...</>):'Register'}
+                </Text>
                 <Icon
                   style={styles.icon}
                   name={'arrow-right'}
@@ -179,4 +287,22 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     paddingLeft: 40,
   },
+  eyeIcon: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+    marginTop: -53,
+    marginRight: 10,
+    textAlign: 'right',
+    width: 20,
+  },
+
+  iconParent: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+  },
+  btndisable:{
+    backgroundColor:'gray'
+  }
 });
