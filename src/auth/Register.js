@@ -79,27 +79,33 @@ const Register = () => {
   };
 
   const handleSubmit = async () => {
-    setloading(true)
-    const response = await fetch('http://192.168.50.107:3000/api/user', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        name: formData.name,
-        email: formData.email,
-        password: formData.password,
-      }),
-    });
-    if (response.ok) {
-      setloading(false)
-      navigation.navigate('CreateNewNotes');
-    } else {
-      console.error('API Error - Status Code:', response.status);
-      const responseText = await response.text();
-      console.error('API Error - Response Text:', responseText);
+    try {
+      setloading(true)
+      const response = await fetch('http://192.168.50.64:3000/api/user/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+      if (response.ok) {
+        setloading(false)
+        navigation.navigate('Login');
+      } else {
+        console.error('API Error - Status Code:', response.status);
+        const responseText = await response.text();
+        console.error('API Error - Response Text:', responseText);
+        setloading(false)
+      }
+    } catch (error) {
+      console.log(error);
       setloading(false)
     }
+
   };
 
   return (
