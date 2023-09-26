@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import React, {useEffect, useState, useContext} from 'react';
 import {useNavigation} from '@react-navigation/native';
-import PurpleBtn from '../components/PurpleBtn';
 import {LoginManager, AccessToken} from 'react-native-fbsdk-next';
 import {
   GoogleSignin,
@@ -19,7 +18,6 @@ import {
 import {ContextAuth} from './AuthContext';
 import Icon from 'react-native-vector-icons/FontAwesome6';
 import * as Yup from 'yup';
-
 
 
 const Login = () => {
@@ -76,7 +74,7 @@ const Login = () => {
   const handleSubmit = async () => {
     try{
      setloading(true)
-     const response = await fetch('http://192.168.50.64:3000/api/user/signin',
+     const response = await fetch('http:/192.168.50.64:3000/api/user/signin',
      {method:'POST',
       headers:{
         "Content-Type" :"application/json"
@@ -88,6 +86,9 @@ const Login = () => {
     })
     if(response.ok){
       setloading(false)
+      // const userResponse = await response.json()
+      // console.log(userResponse)
+      // const token = jwt.sign({email:userResponse.email})
       navigation.navigate('CreateNewNotes')
     }
 

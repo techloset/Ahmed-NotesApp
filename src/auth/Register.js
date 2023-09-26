@@ -17,8 +17,7 @@ import HeaderBack from '../components/HeaderBack';
 import Icon from 'react-native-vector-icons/FontAwesome6';
 import IconF from 'react-native-vector-icons/FontAwesome';
 import * as Yup from 'yup';
-import axios from 'axios';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const Register = () => {
   const navigation = useNavigation();
 
@@ -94,6 +93,15 @@ const Register = () => {
       });
       if (response.ok) {
         setloading(false)
+        const res = await response.json()
+        const token = res.token
+        console.log(token);
+        try {
+           await AsyncStorage.setItem("Token",token)
+           console.log("token saved");
+        } catch (error) {
+          console.log(error);
+        }
         navigation.navigate('Login');
       } else {
         console.error('API Error - Status Code:', response.status);
