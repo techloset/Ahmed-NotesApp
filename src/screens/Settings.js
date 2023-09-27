@@ -36,7 +36,6 @@ const Settings = () => {
   const navigation = useNavigation();
 
   const {userInfo, AuthData} = useContext(ContextAuth);
-
   const signOut = async () => {
     try {
       // const isGoogleUser = userInfo.user.googleId !== undefined;
@@ -80,6 +79,7 @@ const Settings = () => {
           <View style={styles.line}></View>
 
           <View style={styles.ProfileInfo}>
+            
             <View>
               {userInfo && userInfo.user && userInfo.user.photo ? (
                 <Image
@@ -94,7 +94,9 @@ const Settings = () => {
               )}
             </View>
             <View style={{marginTop: 10}}>
-              <Text style={styles.name}> {userInfo && userInfo.user && userInfo.user.name}</Text>
+              {userInfo && userInfo.user && userInfo.user.photo ?  
+              <Text style={styles.name}> {userInfo.user.name}</Text>:
+              <Text style={styles.name}> {userInfo.name }</Text>}
               <View style={{display: 'flex', flexDirection: 'row', gap: 6}}>
                 <Icon
                   name="mail"
@@ -103,7 +105,9 @@ const Settings = () => {
                   style={{marginTop: 3}}
                 />
                 <Text style={{fontSize: 12, color: '#827D89'}}>
-                {userInfo && userInfo.user && userInfo.user.email}
+                {userInfo && userInfo.user && userInfo.user.email ?  
+              <Text> {userInfo.user.email}</Text>:
+              <Text > {userInfo.email }</Text>}
                 </Text>
               </View>
             </View>

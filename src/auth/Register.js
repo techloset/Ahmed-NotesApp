@@ -34,7 +34,7 @@ const Register = () => {
     confirmPassword: '',
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [userData, setUserData] =  useState(null)
+  // const [userData, setUserData] =  useState(null)
 
   const handleInputChange = (fieldName, text) => {
     setFormData({...formData, [fieldName]: text});
@@ -90,10 +90,10 @@ const Register = () => {
       });
       if (response.ok) {
         setloading(false)
-        const usersData = await response.json()
-        setUserData(usersData)
-        const token = await usersData.token
-        console.log("tokennnnnn",token);
+        // const usersData = await response.json()
+        // setUserData(usersData)
+        // const token = await usersData.token
+        // console.log("tokennnnnn",token);
         try {
            await AsyncStorage.setItem("Token",token)
            console.log("token saved", token);
@@ -115,13 +115,13 @@ const Register = () => {
   };
 
 
-  const {AuthData} = useContext(ContextAuth);
+  // const {AuthData} = useContext(ContextAuth);
 
-  useEffect(() => {
-    if (userData) {
-      AuthData(userData);
-    }
-  }, [userData]);
+  // useEffect(() => {
+  //   if (userData) {
+  //     AuthData(userData);
+  //   }
+  // }, [userData]);
 
   return (
     <ScrollView style={styles.main}>

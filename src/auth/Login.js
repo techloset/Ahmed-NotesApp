@@ -68,7 +68,7 @@ const Login = () => {
       setFieldErrors(errorMessages);
     }
   };
-
+  
   const handleSubmit = async () => {
     try{
      setloading(true)
@@ -85,9 +85,10 @@ const Login = () => {
 
     if(response.ok){
       setloading(false)
-      // const userData = await response.json()
-      // console.log("user DAta =>",userData);
-      //   setUserData(userData)
+      const usersData = await response.json()
+      console.log("user DAta =>", usersData);
+     AuthData(usersData);
+        setUserData(usersData)
       navigation.navigate('Settings')
     }
     }catch(error){
@@ -96,17 +97,17 @@ const Login = () => {
     }finally{
       setloading(false)
     }
-
-   
   };
+// const {AuthData} = useContext(ContextAuth);
+  
+// useEffect(() => {
+//   if (userData) {
+//     AuthData(userData);
+//   }
+// }, [userData]);
+ 
 
   
-
-  useEffect(() => {
-    if (userData) {
-      AuthData(userData);
-    }
-  }, [userData]);
 
   useEffect(() => {
     GoogleSignin.configure({webClientId: process.env.WEB_CLIENT_ID});
@@ -147,6 +148,11 @@ const Login = () => {
       AuthData(googleLogin);
     }
   }, [googleLogin]);
+  useEffect(() => {
+    if (userData) {
+      AuthData(userData);
+    }
+  }, [userData]);
 
   //Sign in with Facebook
 
@@ -178,6 +184,10 @@ const Login = () => {
     // Sign-in the user with the credential
     return auth().signInWithCredential(facebookCredential);
   }
+
+
+
+
 
   return (
     <ScrollView style={styles.main}>

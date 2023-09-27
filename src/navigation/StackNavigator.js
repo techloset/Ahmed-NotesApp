@@ -24,45 +24,45 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import AuthContext, { ContextAuth } from '../auth/AuthContext';
 
 
-// const getToken = async () => {
-//   try {
-//     const token = await AsyncStorage.getItem("Token");
-//     //  console.log("tokeeeeeeeen",token);
-//     const response = await fetch('http://192.168.50.64:3000/api/user/verifytoken',
-//     {
-//       method:'POST',
-//       headers:{
-//         "Content-Type": "application/json",
-//         "Authorization": `Bearer ${token}`
-//       },
-//       // body:JSON.stringify({
-//       //      token
-//       // })
-//     })
-//       console.log("responsssssss" , response)
-//   } catch (error) {
-//     console.error("Error getting token:", error);
-//    // Handle errors gracefully
-//   }
-// }
-
-
-// const rees =  await response.json()
-// console.log("resssssssss", rees);
-//  getToken();
 
 
 
 
 const StackNavigator = () => {
 
+  // const [tokenn, settokenn] = useState('')
+  // const getToken = async () => {
+  //   try {
+  //     const token = await AsyncStorage.getItem("Token");
+  //     settokenn(tokenn)
+  //      console.log("tokeeeeeeeen",token);
+  //     const response = await fetch('http://192.168.50.64:3000/api/user/verifytoken',
+  //     {
+  //       method:'POST',
+  //       headers:{
+  //         "Content-Type": "application/json",
+  //         "Authorization": `Bearer ${token}`
+  //       },
+  //       // body:JSON.stringify({
+  //       //      token
+  //       // })
+  //     })
+  //       // console.log("responsssssss" , response)
+  //   } catch (error) {
+  //     console.error("Error getting token:", error);
+  //    // Handle errors gracefully
+  //   }
+  // }
   
+  //  getToken();
+
+  const {userInfo} = useContext(ContextAuth)
 
 
   const Stack = createNativeStackNavigator();
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="OnboardingScreen">
+      <Stack.Navigator initialRouteName={userInfo?"HomeScreen": "OnboardingScreen"}>
         <Stack.Screen name="BottomTabNavigator" component={BottomTabNavigator} options={{ headerShown: false, }} />
         <Stack.Screen name="OnboardingScreen" component={OnboardingScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={Login} options={{ headerShown: false, tabBarVisible: false, }} />
