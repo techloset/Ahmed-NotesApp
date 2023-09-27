@@ -9,15 +9,14 @@ import {
   TouchableOpacity,
   ActivityIndicator
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
-import PurpleBtn from '../components/PurpleBtn';
 import HeaderBack from '../components/HeaderBack';
-// import auth from '@react-native-firebase/auth';
 import Icon from 'react-native-vector-icons/FontAwesome6';
 import IconF from 'react-native-vector-icons/FontAwesome';
 import * as Yup from 'yup';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ContextAuth } from './AuthContext';
 const Register = () => {
   const navigation = useNavigation();
 
@@ -35,6 +34,8 @@ const Register = () => {
     confirmPassword: '',
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [userData, setUserData] =  useState(null)
+
   const handleInputChange = (fieldName, text) => {
     setFormData({...formData, [fieldName]: text});
   };
@@ -60,14 +61,10 @@ const Register = () => {
       // Validate the form data against the schema
       await validationSchema.validate(formData, {abortEarly: false});
 
-      // If validation succeeds, log the form data
+      // If validation succeeds
 
       handleSubmit();
 
-      // console.log('Name:', formData.name);
-      // console.log('Email:', formData.email);
-      // console.log('Password:', formData.password);
-      // console.log('Confirm Password:', formData.confirmPassword);
     } catch (errors) {
       const errorMessages = {};
       errors.inner.forEach(error => {
@@ -93,12 +90,13 @@ const Register = () => {
       });
       if (response.ok) {
         setloading(false)
-        const res = await response.json()
-        const token = res.token
-        console.log(token);
+        const usersData = await response.json()
+        setUserData(usersData)
+        const token = await usersData.token
+        console.log("tokennnnnn",token);
         try {
            await AsyncStorage.setItem("Token",token)
-           console.log("token saved");
+           console.log("token saved", token);
         } catch (error) {
           console.log(error);
         }
@@ -115,6 +113,15 @@ const Register = () => {
     }
 
   };
+
+
+  const {AuthData} = useContext(ContextAuth);
+
+  useEffect(() => {
+    if (userData) {
+      AuthData(userData);
+    }
+  }, [userData]);
 
   return (
     <ScrollView style={styles.main}>

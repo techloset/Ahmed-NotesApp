@@ -6,19 +6,19 @@ import {
   TouchableOpacity,
   Switch,
 } from 'react-native';
-import { ScrollView } from 'react-native';
+import {ScrollView} from 'react-native';
 import HeaderBack from '../components/HeaderBack';
-import { Image } from 'react-native';
+import {Image} from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import IconF from 'react-native-vector-icons/SimpleLineIcons';
 import Iconm from 'react-native-vector-icons/MaterialCommunityIcons';
 import IconMa from 'react-native-vector-icons/MaterialIcons';
 import Modal from 'react-native-modal';
-import React, { useState, useContext } from 'react';
+import React, {useState, useContext} from 'react';
 import IconA from 'react-native-vector-icons/AntDesign';
-import { useNavigation } from '@react-navigation/native';
-import  AuthContext, { ContextAuth } from '../auth/AuthContext';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import {useNavigation} from '@react-navigation/native';
+import AuthContext, {ContextAuth} from '../auth/AuthContext';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
 const Settings = () => {
   const [isEnabled, setIsEnabled] = useState(false);
@@ -26,7 +26,6 @@ const Settings = () => {
 
   const [isModalVisible, setModalVisible] = useState(false);
   const [isModalVisibleLogout, setModalVisibleLogout] = useState(false);
-
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
@@ -34,25 +33,36 @@ const Settings = () => {
     setModalVisibleLogout(!isModalVisibleLogout);
   };
 
-  const navigation = useNavigation()
+  const navigation = useNavigation();
 
+  const {userInfo, AuthData} = useContext(ContextAuth);
 
+  const signOut = async () => {
+    try {
+      // const isGoogleUser = userInfo.user.googleId !== undefined;
+      // if (isGoogleUser) {
+      await GoogleSignin.signOut();
+      // }
 
-const {userInfo, AuthData} = useContext(ContextAuth)
+      await fetch('http://192.168.50.64:3000/api/user/logout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({token: userInfo.token}), // Replace with the actual token
+      });
+      console.log('Logout Token ->', userInfo.token); // Set the authentication context to null
+      navigation.navigate('Login');
+      AuthData(null);
 
+      // Navigate to the login screen or perform any other necessary actions
 
-const signOut = async () => {
-  try {
-    await GoogleSignin.signOut();
-    AuthData( null );
-    navigation.navigate('Login') // Remember to remove the user from your app's state as well
-  } catch (error) {
-    console.error(error);
-  }
-  console.log('Logout');
-};
-
-
+      // Remember to remove the user from your app's state as well
+    } catch (error) {
+      console.error(error);
+    }
+    console.log('Logout');
+  };
 
   return (
     <>
@@ -63,7 +73,7 @@ const signOut = async () => {
             hidden={false}
             backgroundColor="white"
           />
-          <View style={{ display: 'flex', flexDirection: 'row', gap: 80 }}>
+          <View style={{display: 'flex', flexDirection: 'row', gap: 80}}>
             <HeaderBack title="Back" />
             <Text style={styles.newNotes}>Settings</Text>
           </View>
@@ -71,32 +81,41 @@ const signOut = async () => {
 
           <View style={styles.ProfileInfo}>
             <View>
-              <Image source={{uri:userInfo && userInfo.user.photo}} style={{width:65, height:65, borderRadius:100}} />
+              {userInfo && userInfo.user && userInfo.user.photo ? (
+                <Image
+                  source={{uri: userInfo.user.photo}}
+                  style={{width: 65, height: 65, borderRadius: 100}}
+                />
+              ) : (
+                <Image
+                  source={require('../assects/images/user.png')}
+                  style={{width: 65, height: 65, borderRadius: 100}}
+                />
+              )}
             </View>
-            <View style={{ marginTop: 10 }}>
-              <Text style={styles.name}>
-                {userInfo && userInfo.user.name}</Text>
-              <View style={{ display: 'flex', flexDirection: 'row', gap: 6 }}>
+            <View style={{marginTop: 10}}>
+              <Text style={styles.name}> {userInfo && userInfo.user && userInfo.user.name}</Text>
+              <View style={{display: 'flex', flexDirection: 'row', gap: 6}}>
                 <Icon
                   name="mail"
                   size={12}
                   color={'#827D89'}
-                  style={{ marginTop: 3 }}
+                  style={{marginTop: 3}}
                 />
-                <Text style={{ fontSize: 12, color: '#827D89' }}>
-                {userInfo && userInfo.user.email}
+                <Text style={{fontSize: 12, color: '#827D89'}}>
+                {userInfo && userInfo.user && userInfo.user.email}
                 </Text>
               </View>
             </View>
           </View>
-          <View style={{ marginHorizontal: 16, marginTop: 20 }}>
+          <View style={{marginHorizontal: 16, marginTop: 20}}>
             <TouchableOpacity style={styles.editBtn}>
-              <View style={{ display: 'flex', flexDirection: 'row' }}>
+              <View style={{display: 'flex', flexDirection: 'row'}}>
                 <Icon
                   name="edit"
                   size={16}
                   color={'#6A3EA1'}
-                  style={{ marginEnd: 5, marginTop: 3 }}
+                  style={{marginEnd: 5, marginTop: 3}}
                 />
                 <Text style={styles.textbtn}>Edit Profile</Text>
               </View>
@@ -108,9 +127,9 @@ const signOut = async () => {
           </View>
 
           <View style={styles.parentlist}>
-            <View style={{ display: 'flex', flexDirection: 'row' }}>
+            <View style={{display: 'flex', flexDirection: 'row'}}>
               <IconF
-                style={{ marginRight: 8, marginTop: -5 }}
+                style={{marginRight: 8, marginTop: -5}}
                 name="lock"
                 size={25}
                 color={'black'}
@@ -118,9 +137,9 @@ const signOut = async () => {
               <Text style={styles.remainder}>Change Password</Text>
             </View>
             <View>
-              <View style={{ display: 'flex', flexDirection: 'row' }}>
+              <View style={{display: 'flex', flexDirection: 'row'}}>
                 <IconMa
-                  style={{ marginRight: 5 }}
+                  style={{marginRight: 5}}
                   name="arrow-forward-ios"
                   size={16}
                   color={'#827D89'}
@@ -130,14 +149,14 @@ const signOut = async () => {
           </View>
 
           <View style={styles.parentlist}>
-            <View style={{ display: 'flex', flexDirection: 'row' }}>
-              <View style={{ marginRight: 8, marginTop: -1 }}>
+            <View style={{display: 'flex', flexDirection: 'row'}}>
+              <View style={{marginRight: 8, marginTop: -1}}>
                 <Image source={require('../assects/images/text-size.png')} />
               </View>
               <Text style={styles.remainder}>Text Size</Text>
             </View>
             <View>
-              <View style={{ display: 'flex', flexDirection: 'row' }}>
+              <View style={{display: 'flex', flexDirection: 'row'}}>
                 <Text style={styles.leftmenu}>Medium</Text>
               </View>
             </View>
@@ -145,9 +164,9 @@ const signOut = async () => {
 
           <TouchableOpacity onPress={toggleModal}>
             <View style={styles.parentlist}>
-              <View style={{ display: 'flex', flexDirection: 'row' }}>
+              <View style={{display: 'flex', flexDirection: 'row'}}>
                 <Icon
-                  style={{ marginRight: 8, marginTop: -3 }}
+                  style={{marginRight: 8, marginTop: -3}}
                   name="bell"
                   size={25}
                   color={'black'}
@@ -155,7 +174,7 @@ const signOut = async () => {
                 <Text style={styles.remainder}>Notifications</Text>
               </View>
               <View>
-                <View style={{ display: 'flex', flexDirection: 'row' }}>
+                <View style={{display: 'flex', flexDirection: 'row'}}>
                   <Text style={styles.leftmenu}>All active</Text>
                 </View>
               </View>
@@ -164,7 +183,7 @@ const signOut = async () => {
 
           <View style={[styles.line, styles.line2]}></View>
 
-          <TouchableOpacity onPress={toggleLogout} >
+          <TouchableOpacity onPress={toggleLogout}>
             <View
               style={{
                 display: 'flex',
@@ -173,7 +192,7 @@ const signOut = async () => {
                 marginLeft: 20,
               }}>
               <Iconm
-                style={{ marginTop: 2, marginRight: 14 }}
+                style={{marginTop: 2, marginRight: 14}}
                 name="logout"
                 size={20}
                 color={'#CE3A54'}
@@ -182,24 +201,15 @@ const signOut = async () => {
             </View>
           </TouchableOpacity>
 
-          <View style={{ display: 'flex', marginTop: 200 }}>
+          <View style={{display: 'flex', marginTop: 200}}>
             <Text style={styles.footer}>Makarya Notes v1.1</Text>
           </View>
         </ScrollView>
       </View>
 
-
-
-
-
-
-
-
-
-
       <View>
         <Modal style={styles.model} isVisible={isModalVisible}>
-          <View style={{ display: 'flex', alignItems: 'flex-end' }}>
+          <View style={{display: 'flex', alignItems: 'flex-end'}}>
             <View
               style={{
                 backgroundColor: '#EFEEF0',
@@ -215,15 +225,15 @@ const signOut = async () => {
             </View>
           </View>
           <View style={[styles.parentlist, styles.modelNotify]}>
-            <View style={{ display: 'flex', flexDirection: 'row' }}>
+            <View style={{display: 'flex', flexDirection: 'row'}}>
               <Text style={[styles.remainder, styles.notification]}>
                 Email Notifiations
               </Text>
             </View>
             <View>
-              <View style={{ display: 'flex', flexDirection: 'row' }}>
+              <View style={{display: 'flex', flexDirection: 'row'}}>
                 <Switch
-                  trackColor={{ false: '#EFE9F7', true: '#EFE9F7' }}
+                  trackColor={{false: '#EFE9F7', true: '#EFE9F7'}}
                   thumbColor={isEnabled ? '#6A3EA1' : '#EFE9F7'}
                   ios_backgroundColor="#3e3e3e"
                   onValueChange={toggleSwitch}
@@ -234,16 +244,16 @@ const signOut = async () => {
           </View>
 
           <View style={[styles.parentlist, styles.modelnotify2]}>
-            <View style={{ display: 'flex', flexDirection: 'row' }}>
+            <View style={{display: 'flex', flexDirection: 'row'}}>
               <Text style={[styles.remainder, styles.notification]}>
                 Email Notifiations
               </Text>
             </View>
             <View>
-              <View style={{ display: 'flex', flexDirection: 'row' }}>
+              <View style={{display: 'flex', flexDirection: 'row'}}>
                 <View style={styles.container}>
                   <Switch
-                    trackColor={{ false: '#EFE9F7', true: '#EFE9F7' }}
+                    trackColor={{false: '#EFE9F7', true: '#EFE9F7'}}
                     thumbColor={isEnabled ? '#6A3EA1' : '#EFE9F7'}
                     ios_backgroundColor="#3e3e3e"
                     onValueChange={toggleSwitch}
@@ -256,44 +266,34 @@ const signOut = async () => {
         </Modal>
       </View>
 
-
-
-
-
-
-
-
-
-
-
       <View>
         <Modal style={styles.model2} isVisible={isModalVisibleLogout}>
           <View style={styles.modelDiv}>
             <View>
               <Text style={styles.logouttext}>Log Out</Text>
               <View>
-                <Text style={styles.para}>Are you sure you want to log out from the application?</Text>
+                <Text style={styles.para}>
+                  Are you sure you want to log out from the application?
+                </Text>
               </View>
               <View style={styles.btnsParent}>
-                <TouchableOpacity onPress={toggleLogout} style={styles.cencelbtn}>
-                   <Text style={styles.cencelbtntext}>Cencel</Text>
+                <TouchableOpacity
+                  onPress={toggleLogout}
+                  style={styles.cencelbtn}>
+                  <Text style={styles.cencelbtntext}>Cencel</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={signOut} style={[styles.cencelbtn, styles.yesBtn]}>
-                   <Text style={[styles.cencelbtntext, styles.yesText]}>Yes</Text>
+                <TouchableOpacity
+                  onPress={signOut}
+                  style={[styles.cencelbtn, styles.yesBtn]}>
+                  <Text style={[styles.cencelbtntext, styles.yesText]}>
+                    Yes
+                  </Text>
                 </TouchableOpacity>
               </View>
             </View>
-
           </View>
-
-
-
         </Modal>
       </View>
-
-
-
-
     </>
   );
 };
@@ -426,24 +426,22 @@ const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-
   },
   modelDiv: {
     backgroundColor: 'white',
     display: 'flex',
     justifyContent: 'center',
-    alignItems: "center",
+    alignItems: 'center',
     paddingHorizontal: 24,
     paddingVertical: 32,
     width: 280,
-    borderRadius: 16
-
+    borderRadius: 16,
   },
   logouttext: {
     fontSize: 20,
     fontWeight: '700',
     color: 'black',
-    textAlign: 'center'
+    textAlign: 'center',
   },
   para: {
     fontSize: 16,
@@ -451,35 +449,35 @@ const styles = StyleSheet.create({
     lineHeight: 22.4,
     color: '#827D89',
     textAlign: 'center',
-    marginTop: 12
+    marginTop: 12,
   },
-  cencelbtntext:{
-    fontSize:16,
-    fontWeight:'500',
-    color:'#6A3EA1'
+  cencelbtntext: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#6A3EA1',
   },
-  cencelbtn:{
-    width:108,
+  cencelbtn: {
+    width: 108,
     // height:38,
     borderWidth: 1,
-    borderColor:'#6A3EA1',
-    display:'flex',
-    alignItems:'center',
-    justifyContent:'center',
-    borderRadius:100,
-    marginTop:48,
-    paddingHorizontal:16,
-    paddingVertical:8
+    borderColor: '#6A3EA1',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 100,
+    marginTop: 48,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
   },
-  yesBtn:{
-    backgroundColor:'#6A3EA1'
+  yesBtn: {
+    backgroundColor: '#6A3EA1',
   },
-  yesText:{
-    color:'white'
+  yesText: {
+    color: 'white',
   },
-  btnsParent:{
-    display:'flex',
-    flexDirection:'row',
-    gap:16
-  }
+  btnsParent: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: 16,
+  },
 });

@@ -22,6 +22,7 @@ import * as Yup from 'yup';
 
 const Login = () => {
   const [loading, setloading] = useState(false);
+  const [userData, setUserData] =  useState(null)
 
   const [fieldErrors, setFieldErrors] = useState({
     email: null,
@@ -33,6 +34,7 @@ const Login = () => {
     password: '',
   });
   const [googleLogin, setGoogleLogin] = useState(null);
+  // const [registerData, setRegisterData] = useState(null);
 
   const validationSchema = Yup.object().shape({
     email: Yup.string().email('Invalid email').required('Email is required'),
@@ -55,13 +57,9 @@ const Login = () => {
       // Validate the form data against the schema
       await validationSchema.validate(formData, {abortEarly: false});
 
-      // If validation succeeds, log the form data
+      // If validation succeeds,
       handleSubmit();
 
-      // console.log('Name:', formData.name);
-      // console.log('Email:', formData.email);
-      // console.log('Password:', formData.password);
-      // console.log('Confirm Password:', formData.confirmPassword);
     } catch (errors) {
       const errorMessages = {};
       errors.inner.forEach(error => {
@@ -84,22 +82,31 @@ const Login = () => {
          password:formData.password
       })
     })
+
     if(response.ok){
       setloading(false)
-      // const userResponse = await response.json()
-      // console.log(userResponse)
-      // const token = jwt.sign({email:userResponse.email})
-      navigation.navigate('CreateNewNotes')
+      // const userData = await response.json()
+      // console.log("user DAta =>",userData);
+      //   setUserData(userData)
+      navigation.navigate('Settings')
     }
-
     }catch(error){
-      console.log(error);
+      console.log("errorrr",error);
       setloading(false)   
     }finally{
       setloading(false)
     }
+
    
   };
+
+  
+
+  useEffect(() => {
+    if (userData) {
+      AuthData(userData);
+    }
+  }, [userData]);
 
   useEffect(() => {
     GoogleSignin.configure({webClientId: process.env.WEB_CLIENT_ID});

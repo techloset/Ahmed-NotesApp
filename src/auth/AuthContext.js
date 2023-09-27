@@ -7,7 +7,7 @@ export default function AuthContext({children}) {
     const  AuthData = (userdata) =>{
          setuserInfo(userdata);
     }
-
+      //  console.log("Userifoooooo",userInfo)
   return (
     <>
      <ContextAuth.Provider value={{userInfo, AuthData}}>
