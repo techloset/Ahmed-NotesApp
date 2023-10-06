@@ -7,6 +7,7 @@ import {
   View,
   TouchableOpacity,
   ScrollView,
+  Button,
 } from 'react-native';
 import React, {useEffect, useState, useContext} from 'react';
 import {useNavigation} from '@react-navigation/native';
@@ -18,11 +19,13 @@ import {
 import {ContextAuth} from './AuthContext';
 import Icon from 'react-native-vector-icons/FontAwesome6';
 import * as Yup from 'yup';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Login = () => {
+  // const {login} = useContext(AuthContext)
+
   const [loading, setloading] = useState(false);
-  const [userData, setUserData] =  useState(null)
+  const [userData, setUserData] = useState(null);
 
   const [fieldErrors, setFieldErrors] = useState({
     email: null,
@@ -34,7 +37,10 @@ const Login = () => {
     password: '',
   });
   const [googleLogin, setGoogleLogin] = useState(null);
-  // const [registerData, setRegisterData] = useState(null);
+  // console.log("id=====",googleLogin.user.id);
+ 
+     
+
 
   const validationSchema = Yup.object().shape({
     email: Yup.string().email('Invalid email').required('Email is required'),
@@ -59,7 +65,6 @@ const Login = () => {
 
       // If validation succeeds,
       handleSubmit();
-
     } catch (errors) {
       const errorMessages = {};
       errors.inner.forEach(error => {
@@ -68,46 +73,56 @@ const Login = () => {
       setFieldErrors(errorMessages);
     }
   };
-  
-  const handleSubmit = async () => {
-    try{
-     setloading(true)
-     const response = await fetch('http:/192.168.50.64:3000/api/user/signin',
-     {method:'POST',
-      headers:{
-        "Content-Type" :"application/json"
-      },
-      body:JSON.stringify({
-         email:formData.email,
-         password:formData.password
-      })
-    })
 
-    if(response.ok){
-      setloading(false)
-      const usersData = await response.json()
-      console.log("user DAta =>", usersData);
-     AuthData(usersData);
-        setUserData(usersData)
-      navigation.navigate('Settings')
-    }
-    }catch(error){
-      console.log("errorrr",error);
-      setloading(false)   
-    }finally{
-      setloading(false)
+  const handleSubmit = async () => {
+    try {
+      setloading(true);
+      // const token = await AsyncStorage.getItem('Token');
+      // console.log('token in login ', token);
+
+      const response = await fetch('http:/192.168.50.64:3000/api/user/signin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          // Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+
+      if (response.ok) {
+        setloading(false);
+        const usersData = await response.json();
+        const userAuthData = usersData.existingUserByEmail
+        const token = usersData.token
+   
+        try {
+         await AsyncStorage.setItem("Token", token);
+         await AsyncStorage.setItem('UserData', JSON.stringify(userAuthData));
+            // console.log("Token Saved", token);
+        console.log("userAuthData Saved==",userAuthData);
+
+        } catch (error) {
+          console.log(error);
+        }
+        navigation.navigate('HomeScreen');
+      }
+    } catch (error) {
+      console.log('errorrr', error);
+      setloading(false);
+    } finally {
+      setloading(false);
     }
   };
-// const {AuthData} = useContext(ContextAuth);
-  
-// useEffect(() => {
-//   if (userData) {
-//     AuthData(userData);
-//   }
-// }, [userData]);
- 
+  // const {AuthData} = useContext(ContextAuth);
 
-  
+  // useEffect(() => {
+  //   if (userData) {
+  //     AuthData(userData);
+  //   }
+  // }, [userData]);
 
   useEffect(() => {
     GoogleSignin.configure({webClientId: process.env.WEB_CLIENT_ID});
@@ -125,9 +140,11 @@ const Login = () => {
     try {
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
+      console.log("id-==========", userInfo.user.id)
+       const googlid =  await AsyncStorage.setItem("GoogleId",userInfo.user.id)
+      console.log("idsaved==");
       setGoogleLogin(userInfo);
-      navigation.navigate('Settings');
-      // console.log('User login', userInfo);
+      navigation.navigate('HomeScreen');
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         console.log('user cancelled the login flow');
@@ -185,9 +202,9 @@ const Login = () => {
     return auth().signInWithCredential(facebookCredential);
   }
 
-
-
-
+  const forgotPassword = ()=>{
+    navigation.navigate('ForgotPassword')
+  }
 
   return (
     <ScrollView style={styles.main}>
@@ -230,7 +247,9 @@ const Login = () => {
               {fieldErrors.password}
             </Text>
           )}
+          <TouchableOpacity onPress={forgotPassword}>
           <Text style={styles.forgot}>Forgot Password</Text>
+          </TouchableOpacity>
           <View style={{marginTop: 25}}>
             <TouchableOpacity
               onPress={handleLogin}
@@ -248,6 +267,7 @@ const Login = () => {
             </TouchableOpacity>
           </View>
 
+          {/* <Button title='Login' color={'red'} onPress={login()}/> */}
           <View style={styles.parentLine}>
             <View style={styles.left}></View>
             <Text style={styles.Or}>Or</Text>

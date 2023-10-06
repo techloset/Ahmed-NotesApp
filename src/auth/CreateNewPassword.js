@@ -1,58 +1,150 @@
-import { Button, StyleSheet, Text, View, TextInput, ScrollView, StatusBar } from 'react-native'
-import React from 'react'
-import HeaderBack from '../components/HeaderBack'
-import PurpleBtn from '../components/PurpleBtn'
-import { useNavigation } from '@react-navigation/native'
+import {
+  Button,
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  ScrollView,
+  StatusBar,
+  TouchableOpacity
+} from 'react-native';
+import React, { useContext, useState } from 'react';
+import HeaderBack from '../components/HeaderBack';
+import PurpleBtn from '../components/PurpleBtn';
+import { useNavigation } from '@react-navigation/native';
+import * as Yup from 'yup';
+import { ContextAuth } from './AuthContext';
 
 const CreateNewPassword = () => {
+  const navigation = useNavigation();
+  const [loading, setLoading] = useState(false)
 
-  const navigation = useNavigation()
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
 
-  const HomeScreen = () => {
-    navigation.navigate('HomeScreen')
-  }
+  const validationSchema = Yup.object().shape({
+    password: Yup.string()
+      .min(6, 'Password must be at least 6 characters')
+      .required('Password is required'),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref('password'), null], 'Passwords must match')
+      .required('Confirm Password is required'),
+  });
+
+
+  const handleFieldFocus = fieldName => {
+    // Clear the error message when a field is focused
+    setPasswordError({...passwordError, [fieldName]: null});
+  };
+
+ const  {userCode} = useContext(ContextAuth)
+// console.log(userCode,"==================================");
+
+
+  const handleSubmit = async () => {
+    setLoading(true)
+    try {
+      await validationSchema.validate({ password, confirmPassword }, { abortEarly: false });
+
+      const responce = await fetch('http://192.168.50.64:3000/api/user/createnewPassword',{
+        method:'POST',
+        headers:{
+          'Content-Type': 'application/json'
+          },
+          body:JSON.stringify({password:password, verifyCode:userCode})
+
+          
+      })
+      if(responce.ok){
+        setLoading(false)
+        console.log('Password is valid:', password);
+        navigation.navigate("Login")
+
+      }
+    } catch (error) {
+      setLoading(false)
+      const errorMessages = {};
+      error.inner.forEach(err => {
+        errorMessages[err.path] = err.message;
+      });
+      setPasswordError(errorMessages);
+    }finally{
+      setLoading(false)
+    }
+  };
 
   return (
-    <ScrollView  style={styles.main}>
-      <StatusBar barStyle="dark-content" hidden={false} backgroundColor="white" />
-      
+    <ScrollView style={styles.main}>
+      <StatusBar
+        barStyle="dark-content"
+        hidden={false}
+        backgroundColor="white"
+      />
+
       <View>
-        <HeaderBack title='Back to Login' />
+        <HeaderBack title="Back to Login" />
       </View>
       <View style={styles.container}>
-        <Text style={styles.forgot}>Create a  New</Text>
+        <Text style={styles.forgot}>Create a New</Text>
         <Text style={styles.forgot}>Password</Text>
-        <Text style={styles.notesIdea}>Your new password should be different </Text>
+        <Text style={styles.notesIdea}>
+          Your new password should be different{' '}
+        </Text>
         <Text style={styles.notesIdea2}>from the previous password</Text>
         <View style={styles.inputParent}>
-          <Text style={styles.lable}>Email Address</Text>
-          <TextInput style={styles.input} placeholderTextColor={'#180E25'} placeholder='anto_michael@gmail.com' />
-          <Text style={styles.passwordValidation}>min. 8 character, combination of 0-9, A-Z, a-z</Text>
+          <Text style={styles.label}>New Password</Text>
+          <TextInput
+            style={styles.input}
+            placeholderTextColor={'#180E25'}
+            placeholder="********"
+            secureTextEntry={true}
+            onChangeText={text => setPassword(text)}
+            onFocus={() => handleFieldFocus('password')}
+          />
+          {passwordError.password && (
+            <Text style={styles.errorText}>{passwordError.password}</Text>
+          )}
+          <Text style={styles.passwordValidation}>
+            min. 6 characters, combination of 0-9, A-Z, a-z
+          </Text>
         </View>
         <View style={{ marginTop: 20 }}>
-          <Text style={styles.lable}>Retype New Password</Text>
-          <TextInput style={styles.input} placeholderTextColor={'#180E25'} placeholder='********' />
+          <Text style={styles.label}>Retype New Password</Text>
+          <TextInput
+            style={styles.input}
+            placeholderTextColor={'#180E25'}
+            placeholder="********"
+            secureTextEntry={true}
+            onChangeText={text => setConfirmPassword(text)}
+            onFocus={() => handleFieldFocus('confirmPassword')}
+          />
+          {passwordError.confirmPassword && (
+            <Text style={styles.errorText}>{passwordError.confirmPassword}</Text>
+          )}
         </View>
         <View style={{ marginTop: 40 }}>
-          <PurpleBtn style={styles.btn} title='Send' func={HomeScreen} />
+          <TouchableOpacity onPress={handleSubmit} style={[ styles.btn ,loading && styles.loadbtn]}>
+            <Text style={styles.text}>{loading?"Loading...":"Change Password"}</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </ScrollView>
-  )
-}
+  );
+};
 
-export default CreateNewPassword
+export default CreateNewPassword;
 
 const styles = StyleSheet.create({
-  main:{
-   backgroundColor:"white",
-   flex:1
+  main: {
+    backgroundColor: 'white',
+    flex: 1,
   },
   container: {
     flex: 1,
     justifyContent: 'center',
     left: 16,
-    marginTop: 140
+    marginTop: 140,
   },
   forgot: {
     fontSize: 32,
@@ -60,7 +152,6 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontFamily: 'Inter',
     lineHeight: 38.4,
-
   },
   notesIdea: {
     color: '#827D89',
@@ -69,7 +160,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter',
     lineHeight: 22.4,
     fontWeight: '400',
-
   },
   notesIdea2: {
     color: '#827D89',
@@ -77,32 +167,58 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter',
     lineHeight: 22.4,
     fontWeight: '400',
-
   },
   input: {
     borderWidth: 1,
     padding: 16,
-    color: "#180E25",
+    color: '#180E25',
     width: 328,
     borderColor: '#C8C5CB',
     borderRadius: 8,
     height: 54,
-
   },
-  lable: {
-    color: "black",
+  label: {
+    color: 'black',
     fontSize: 16,
     fontWeight: '500',
     marginVertical: 10,
-    lineHeight: 22.4
+    lineHeight: 22.4,
   },
   inputParent: {
-    marginTop: 50
+    marginTop: 50,
   },
   passwordValidation: {
     color: '#C8C5CB',
     fontSize: 12,
     lineHeight: 14.52,
-    top: 5
+    top: 5,
+  },
+  btn: {
+    backgroundColor: '#6A3EA1',
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 100,
+    width: 328,
+    height: 54,
+  },
+  text: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '500',
+    lineHeight: 22.4,
+    fontFamily: 'Inter',
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 10,
+    width:"60%",
+    marginTop: 4,
+  },
+  loadbtn:{
+    backgroundColor:'gray'
   }
-})
+});

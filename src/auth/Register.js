@@ -90,16 +90,18 @@ const Register = () => {
       });
       if (response.ok) {
         setloading(false)
-        // const usersData = await response.json()
-        // setUserData(usersData)
-        // const token = await usersData.token
-        // console.log("tokennnnnn",token);
-        try {
-           await AsyncStorage.setItem("Token",token)
-           console.log("token saved", token);
-        } catch (error) {
-          console.log(error);
-        }
+        // const usersData = await response.json();
+        // console.log("userData========>", usersData);
+        // const token = usersData.token; // Correct way to access the token
+  
+        // try {
+        //   // Save user data and token separately
+        //   await AsyncStorage.setItem("UserData", JSON.stringify(usersData));
+        //   await AsyncStorage.setItem("Token", token);
+        //   console.log("User data and token saved:", usersData, token);
+        // } catch (error) {
+        //   console.error(error);
+        // }
         navigation.navigate('Login');
       } else {
         console.error('API Error - Status Code:', response.status);

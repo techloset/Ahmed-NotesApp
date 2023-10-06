@@ -5,7 +5,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import CheckBox from '@react-native-community/checkbox';
 
 import { Image } from 'react-native'
-const FinishedScreen = () => {
+const FinishedScreen = ({ checkedItems }) => {
   const [toggleCheckBox, setToggleCheckBox] = useState(false)
   return (
     <GestureHandlerRootView>

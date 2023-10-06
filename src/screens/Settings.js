@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Switch,
 } from 'react-native';
+import {DeviceEventEmitter} from 'react-native';
 import {ScrollView} from 'react-native';
 import HeaderBack from '../components/HeaderBack';
 import {Image} from 'react-native';
@@ -14,11 +15,13 @@ import IconF from 'react-native-vector-icons/SimpleLineIcons';
 import Iconm from 'react-native-vector-icons/MaterialCommunityIcons';
 import IconMa from 'react-native-vector-icons/MaterialIcons';
 import Modal from 'react-native-modal';
-import React, {useState, useContext} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import IconA from 'react-native-vector-icons/AntDesign';
 import {useNavigation} from '@react-navigation/native';
 import AuthContext, {ContextAuth} from '../auth/AuthContext';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useRoute} from '@react-navigation/native';
 
 const Settings = () => {
   const [isEnabled, setIsEnabled] = useState(false);
@@ -26,6 +29,49 @@ const Settings = () => {
 
   const [isModalVisible, setModalVisible] = useState(false);
   const [isModalVisibleLogout, setModalVisibleLogout] = useState(false);
+
+  const [userData, setUserData] = useState('');
+  const [profileImage, setProfileImage] = useState(null);
+
+  const route = useRoute();
+
+  useEffect(() => {
+    // Check if the user is already logged in (e.g., token exists in AsyncStorage)
+    async function checkLoginStatus() {
+      try {
+        const storedData = await AsyncStorage.getItem('UserData');
+        const userData = JSON.parse(storedData);
+        console.log('Data==', userData);
+        setUserData(userData);
+
+        // Check if updatedUserData is passed as a parameter and update the state
+        if (route.params && route.params.updatedUserData) {
+          const updatedUserData = route.params.updatedUserData;
+          setUserData(updatedUserData);
+        }
+      } catch (error) {
+        console.error('Error checking login status: ', error);
+      }
+    }
+
+    checkLoginStatus();
+    getProfileImage();
+    const profileImageChangedListener = DeviceEventEmitter.addListener(
+      'profileImageChanged',
+      newProfileImage => {
+        setProfileImage(newProfileImage);
+      },
+    );
+
+    return () => {
+      profileImageChangedListener.remove();
+    };
+  }, [route.params]);
+
+  const editProfile = () => {
+    navigation.navigate('EditProfile');
+  };
+
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
@@ -36,31 +82,44 @@ const Settings = () => {
   const navigation = useNavigation();
 
   const {userInfo, AuthData} = useContext(ContextAuth);
+
   const signOut = async () => {
     try {
-      // const isGoogleUser = userInfo.user.googleId !== undefined;
-      // if (isGoogleUser) {
+      await delToken();
+
       await GoogleSignin.signOut();
-      // }
 
       await fetch('http://192.168.50.64:3000/api/user/logout', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({token: userInfo.token}), // Replace with the actual token
+        body: JSON.stringify({token: userInfo.token}),
       });
-      console.log('Logout Token ->', userInfo.token); // Set the authentication context to null
+      console.log('Logout Token ->', userInfo.token);
       navigation.navigate('Login');
       AuthData(null);
-
-      // Navigate to the login screen or perform any other necessary actions
-
-      // Remember to remove the user from your app's state as well
     } catch (error) {
       console.error(error);
     }
     console.log('Logout');
+  };
+
+  const delToken = async () => {
+    const deleteToken = await AsyncStorage.removeItem('Token');
+    const deleteid = await AsyncStorage.removeItem('GoogleId');
+    console.log('deleteToken', deleteToken);
+    console.log('deleteGoogleIdData', deleteid);
+    navigation.navigate('Login');
+  };
+
+  const getProfileImage = async () => {
+    try {
+      const uri = await AsyncStorage.getItem('Profile');
+      setProfileImage(uri);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
@@ -79,7 +138,6 @@ const Settings = () => {
           <View style={styles.line}></View>
 
           <View style={styles.ProfileInfo}>
-            
             <View>
               {userInfo && userInfo.user && userInfo.user.photo ? (
                 <Image
@@ -88,15 +146,21 @@ const Settings = () => {
                 />
               ) : (
                 <Image
-                  source={require('../assects/images/user.png')}
+                  source={
+                    profileImage
+                      ? {uri: profileImage}
+                      : require('../assects/images/user.png')
+                  }
                   style={{width: 65, height: 65, borderRadius: 100}}
                 />
               )}
             </View>
             <View style={{marginTop: 10}}>
-              {userInfo && userInfo.user && userInfo.user.photo ?  
-              <Text style={styles.name}> {userInfo.user.name}</Text>:
-              <Text style={styles.name}> {userInfo.name }</Text>}
+              {userInfo && userInfo.user && userInfo.user.name ? (
+                <Text style={styles.name}> {userInfo.user.name}</Text>
+              ) : (
+                <Text style={styles.name}> {userData.name}</Text>
+              )}
               <View style={{display: 'flex', flexDirection: 'row', gap: 6}}>
                 <Icon
                   name="mail"
@@ -105,15 +169,17 @@ const Settings = () => {
                   style={{marginTop: 3}}
                 />
                 <Text style={{fontSize: 12, color: '#827D89'}}>
-                {userInfo && userInfo.user && userInfo.user.email ?  
-              <Text> {userInfo.user.email}</Text>:
-              <Text > {userInfo.email }</Text>}
+                  {userInfo && userInfo.user && userInfo.user.email ? (
+                    <Text> {userInfo.user.email}</Text>
+                  ) : (
+                    <Text> {userData.email}</Text>
+                  )}
                 </Text>
               </View>
             </View>
           </View>
           <View style={{marginHorizontal: 16, marginTop: 20}}>
-            <TouchableOpacity style={styles.editBtn}>
+            <TouchableOpacity style={styles.editBtn} onPress={editProfile}>
               <View style={{display: 'flex', flexDirection: 'row'}}>
                 <Icon
                   name="edit"
@@ -231,7 +297,7 @@ const Settings = () => {
           <View style={[styles.parentlist, styles.modelNotify]}>
             <View style={{display: 'flex', flexDirection: 'row'}}>
               <Text style={[styles.remainder, styles.notification]}>
-                Email Notifiations
+                Email Notifications
               </Text>
             </View>
             <View>
@@ -250,7 +316,7 @@ const Settings = () => {
           <View style={[styles.parentlist, styles.modelnotify2]}>
             <View style={{display: 'flex', flexDirection: 'row'}}>
               <Text style={[styles.remainder, styles.notification]}>
-                Email Notifiations
+                Email Notifications
               </Text>
             </View>
             <View>
@@ -284,7 +350,7 @@ const Settings = () => {
                 <TouchableOpacity
                   onPress={toggleLogout}
                   style={styles.cencelbtn}>
-                  <Text style={styles.cencelbtntext}>Cencel</Text>
+                  <Text style={styles.cencelbtntext}>Cancel</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={signOut}
@@ -462,7 +528,6 @@ const styles = StyleSheet.create({
   },
   cencelbtn: {
     width: 108,
-    // height:38,
     borderWidth: 1,
     borderColor: '#6A3EA1',
     display: 'flex',
