@@ -16,7 +16,8 @@ import Icon from 'react-native-vector-icons/Feather';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { PermissionsAndroid } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { fontPixel, heightPixel, pixelSizeHorizontal, pixelSizeVertical, widthPixel } from '../constants/responsive';
 
 const EditProfile = () => {
   const [userData, setUserData] = useState(null);
@@ -24,21 +25,33 @@ const EditProfile = () => {
   const [updatedemail, setEmail] = useState('');
   const [profileImage, setProfileImage] = useState(null);
   const [loading, setLoading] = useState(false); // Add loading state
+  const [userInfog, setuserInfog] = useState()
+
+
+
 
   useEffect(() => {
     async function checkLoginStatus() {
       try {
         const storedData = await AsyncStorage.getItem('UserData');
+        let googleData =  await AsyncStorage.getItem('GoogleUserData')
         const userData = JSON.parse(storedData);
+        const Datagoogle = JSON.parse(googleData)
         console.log('Data==', userData);
+        console.log('googleData==', Datagoogle);
+        setuserInfog(Datagoogle)
         setUserData(userData);
 
         if (userData && userData.name) {
           setname(userData.name);
+        }else if(Datagoogle && Datagoogle.name) {
+          setname(Datagoogle.name);
         }
 
         if (userData && userData.email) {
           setEmail(userData.email);
+        }else if(Datagoogle && Datagoogle.email) {
+          setname(Datagoogle.email);
         }
       } catch (error) {
         console.error('Error checking login status: ', error);
@@ -47,6 +60,9 @@ const EditProfile = () => {
 
     checkLoginStatus();
   }, []);
+
+
+
 
 
    const navigation = useNavigation()
@@ -103,6 +119,8 @@ const EditProfile = () => {
       console.warn(err);
     }
   };
+  
+
 
   const pickImage = () => {
     setLoading(true); // Set loading to true when fetching new image
@@ -159,7 +177,7 @@ const EditProfile = () => {
           <View key={profileImage || 'defaultImage'}>
           
               <Image
-                source={profileImage ? { uri: profileImage } : defaultProfileImage}
+                source={userInfog && userInfog.photo ? { uri: userInfog.photo } : defaultProfileImage}
                 style={{ width: 120, height: 120, borderRadius: 100 }}
               />
             
@@ -195,7 +213,7 @@ const EditProfile = () => {
               style={styles.input}
               placeholderTextColor={'#180E25'}
               placeholder="Michael Antonio"
-              value={updatedname}
+              value={userInfog ? userInfog.name : updatedname}
               onChangeText={setname}
             />
           </View>
@@ -205,7 +223,7 @@ const EditProfile = () => {
               style={styles.input}
               placeholderTextColor={'#180E25'}
               placeholder="anto_michael@gmail.com"
-              value={updatedemail}
+              value={userInfog ? userInfog.email : updatedemail}
               onChangeText={setEmail}
             />
             <Text style={styles.passwordValidation}>
@@ -238,28 +256,28 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   newNotes: {
-    fontSize: 16,
+    fontSize: fontPixel(16),
     fontWeight: '500',
     color: '#000000',
     textAlign: 'center',
-    marginTop: 15,
+    marginTop: pixelSizeHorizontal(15),
     lineHeight: 22.4,
-    marginLeft: -10,
+    marginLeft: pixelSizeVertical(-10),
   },
   line: {
-    width: '100%',
-    height: 1,
+    width: widthPixel(100),
+    height: heightPixel(1),
     backgroundColor: '#EFEEF0',
-    marginTop: 20,
+    marginTop: pixelSizeHorizontal(20),
   },
   Profilepic: {
     alignItems: 'center',
   },
   editBtn: {
-    width: 171,
+    width: widthPixel(171),
     borderWidth: 1,
     borderRadius: 100,
-    paddingVertical: 8,
+    paddingVertical: pixelSizeVertical(8),
     borderColor: '#6A3EA1',
     display: 'flex',
     justifyContent: 'center',
@@ -267,62 +285,62 @@ const styles = StyleSheet.create({
   },
   textbtn: {
     color: '#6A3EA1',
-    fontSize: 16,
+    fontSize: fontPixel(16),
     fontWeight: '500',
   },
   container: {
     flex: 1,
     justifyContent: 'center',
-    left: 16,
-    marginTop: -20,
+    left: pixelSizeVertical(16),
+    marginTop: pixelSizeHorizontal(-20),
   },
   input: {
     borderWidth: 1,
-    padding: 16,
+    padding: pixelSizeHorizontal(16),
     color: '#180E25',
-    width: 328,
+    width: widthPixel(328),
     borderColor: '#C8C5CB',
     borderRadius: 8,
-    height: 54,
+    height: heightPixel(54),
   },
   label: {
     color: 'black',
-    fontSize: 16,
+    fontSize: fontPixel(16),
     fontWeight: '500',
-    marginVertical: 10,
+    marginVertical: pixelSizeVertical(10),
     lineHeight: 22.4,
   },
   inputParent: {
-    marginTop: 50,
+    marginTop: pixelSizeHorizontal(50),
   },
   passwordValidation: {
     color: '#C8C5CB',
-    fontSize: 12,
+    fontSize: fontPixel(12),
     lineHeight: 14.52,
-    top: 5,
-    width: 280,
+    top: pixelSizeHorizontal(5),
+    width: widthPixel(280),
   },
   line2: {
-    marginHorizontal: 2,
-    width: '90%',
-    marginStart: 16,
-    marginTop: 20,
+    marginHorizontal: pixelSizeHorizontal(2),
+    width: widthPixel(90),
+    marginStart: pixelSizeVertical(16),
+    marginTop: pixelSizeHorizontal(20),
   },
   btn: {
     backgroundColor: '#6A3EA1',
-    paddingVertical: 15,
-    paddingHorizontal: 20,
+    paddingVertical: pixelSizeVertical(15),
+    paddingHorizontal: pixelSizeHorizontal(20),
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 100,
-    width: 328,
-    height: 54,
+    width: widthPixel(328),
+    height: heightPixel(54),
   },
   text: {
     color: 'white',
-    fontSize: 16,
+    fontSize: fontPixel(16),
     fontWeight: '500',
     lineHeight: 22.4,
     fontFamily: 'Inter',

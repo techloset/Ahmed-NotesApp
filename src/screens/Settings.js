@@ -5,6 +5,7 @@ import {
   View,
   TouchableOpacity,
   Switch,
+  ActivityIndicator,
 } from 'react-native';
 import {DeviceEventEmitter} from 'react-native';
 import {ScrollView} from 'react-native';
@@ -17,11 +18,12 @@ import IconMa from 'react-native-vector-icons/MaterialIcons';
 import Modal from 'react-native-modal';
 import React, {useState, useContext, useEffect} from 'react';
 import IconA from 'react-native-vector-icons/AntDesign';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import AuthContext, {ContextAuth} from '../auth/AuthContext';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useRoute} from '@react-navigation/native';
+import { fontPixel, heightPixel, pixelSizeHorizontal, pixelSizeVertical, widthPixel } from '../constants/responsive';
 
 const Settings = () => {
   const [isEnabled, setIsEnabled] = useState(false);
@@ -32,7 +34,9 @@ const Settings = () => {
 
   const [userData, setUserData] = useState('');
   const [profileImage, setProfileImage] = useState(null);
-
+  const [userInfog, setuserInfog] = useState()
+  const [isLoading, setIsLoading] = useState(true);
+// console.log(userInfog,"-=========================================");
   const route = useRoute();
 
   useEffect(() => {
@@ -68,13 +72,37 @@ const Settings = () => {
     };
   }, [route.params]);
 
+
+
+  const getGoogleUser = async () =>{
+      try {
+       let googleData =  await AsyncStorage.getItem('GoogleUserData')
+       console.log("gogoogogoogg",googleData)
+       setuserInfog(JSON.parse(googleData))
+       setIsLoading(false)
+      } catch (error) {
+        console.log(error);
+      }
+  }
+
+  useFocusEffect(
+    React.useCallback(()=>{
+        getGoogleUser()
+      }, [])
+  )
+
+
+  
+
   const editProfile = () => {
     navigation.navigate('EditProfile');
   };
 
+
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
+
   const toggleLogout = () => {
     setModalVisibleLogout(!isModalVisibleLogout);
   };
@@ -105,13 +133,22 @@ const Settings = () => {
     console.log('Logout');
   };
 
+
+
+
   const delToken = async () => {
     const deleteToken = await AsyncStorage.removeItem('Token');
     const deleteid = await AsyncStorage.removeItem('GoogleId');
+    const deleteUserData = await AsyncStorage.removeItem('GoogleUserData');
+    const removeImage = await AsyncStorage.removeItem('Profile');
     console.log('deleteToken', deleteToken);
     console.log('deleteGoogleIdData', deleteid);
+    console.log('deletedeleteUserData', deleteUserData);
     navigation.navigate('Login');
   };
+
+
+
 
   const getProfileImage = async () => {
     try {
@@ -122,9 +159,18 @@ const Settings = () => {
     }
   };
 
+
+  console.log("9----------userInfog-----------",userInfog);
+
   return (
     <>
-      <View style={styles.main}>
+
+{isLoading ? ( // Check if data is loading
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <ActivityIndicator size="large" color="#6A3EA1" />
+        </View>
+      ) : (
+        <View style={styles.main}>
         <ScrollView>
           <StatusBar
             barStyle="dark-content"
@@ -139,9 +185,9 @@ const Settings = () => {
 
           <View style={styles.ProfileInfo}>
             <View>
-              {userInfo && userInfo.user && userInfo.user.photo ? (
+              { userInfog ? (
                 <Image
-                  source={{uri: userInfo.user.photo}}
+                  source={{uri: userInfog.photo}}
                   style={{width: 65, height: 65, borderRadius: 100}}
                 />
               ) : (
@@ -155,9 +201,10 @@ const Settings = () => {
                 />
               )}
             </View>
+        
             <View style={{marginTop: 10}}>
-              {userInfo && userInfo.user && userInfo.user.name ? (
-                <Text style={styles.name}> {userInfo.user.name}</Text>
+              { userInfog && userData ? (
+                <Text style={styles.name}> {userInfog.name}</Text>
               ) : (
                 <Text style={styles.name}> {userData.name}</Text>
               )}
@@ -169,8 +216,8 @@ const Settings = () => {
                   style={{marginTop: 3}}
                 />
                 <Text style={{fontSize: 12, color: '#827D89'}}>
-                  {userInfo && userInfo.user && userInfo.user.email ? (
-                    <Text> {userInfo.user.email}</Text>
+                  {userInfog && userData ? (
+                    <Text> {userInfog.email}</Text>
                   ) : (
                     <Text> {userData.email}</Text>
                   )}
@@ -276,6 +323,11 @@ const Settings = () => {
           </View>
         </ScrollView>
       </View>
+      )}
+
+
+
+      
 
       <View>
         <Modal style={styles.model} isVisible={isModalVisible}>
@@ -378,28 +430,28 @@ const styles = StyleSheet.create({
   },
 
   line: {
-    width: '100%',
-    height: 1,
+    width: widthPixel(100),
+    height: heightPixel(1),
     backgroundColor: '#EFEEF0',
-    marginTop: 20,
+    marginTop: pixelSizeHorizontal(20),
   },
   newNotes: {
-    fontSize: 16,
+    fontSize: fontPixel(16),
     fontWeight: '500',
     color: '#000000',
     textAlign: 'center',
-    marginTop: 13,
+    marginTop: pixelSizeHorizontal(13),
     lineHeight: 22.4,
   },
   ProfileInfo: {
-    marginLeft: 16,
-    marginTop: 30,
+    marginLeft: pixelSizeVertical(16),
+    marginTop: pixelSizeHorizontal(30),
     display: 'flex',
     flexDirection: 'row',
     gap: 16,
   },
   name: {
-    fontSize: 20,
+    fontSize: fontPixel(20),
     fontWeight: '700',
     lineHeight: 28,
     color: 'black',
@@ -408,8 +460,8 @@ const styles = StyleSheet.create({
     width: '328',
     borderWidth: 1,
     borderRadius: 100,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: pixelSizeHorizontal(16),
+    paddingVertical: pixelSizeVertical(8),
     borderColor: '#6A3EA1',
     display: 'flex',
     justifyContent: 'center',
@@ -417,54 +469,54 @@ const styles = StyleSheet.create({
   },
   textbtn: {
     color: '#6A3EA1',
-    fontSize: 16,
+    fontSize: fontPixel(16),
     fontWeight: '500',
   },
   line2: {
-    marginHorizontal: 2,
-    width: '90%',
-    marginStart: 16,
-    marginTop: 20,
+    marginHorizontal: pixelSizeHorizontal(2),
+    width: widthPixel(90),
+    marginStart: pixelSizeVertical(16),
+    marginTop: pixelSizeHorizontal(20),
   },
   appSetting: {
-    padding: 16,
-    marginTop: 5,
+    padding: pixelSizeHorizontal(16),
+    marginTop: pixelSizeHorizontal(5),
   },
   setting: {
-    fontSize: 12,
+    fontSize: fontPixel(12),
     fontWeight: '400',
     color: '#827D89',
   },
   remainder: {
-    fontSize: 16,
+    fontSize: fontPixel(16),
     fontWeight: '500',
     lineHeight: 22.4,
     color: '#180E25',
   },
   parentlist: {
-    marginTop: 20,
+    marginTop: pixelSizeHorizontal(20),
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginHorizontal: 16,
-    marginBottom: 20,
+    marginHorizontal: pixelSizeHorizontal(16),
+    marginBottom: pixelSizeHorizontal(20),
   },
   leftmenu: {
-    fontSize: 12,
+    fontSize: fontPixel(12),
     fontWeight: '400',
     lineHeight: 14.52,
     color: '#827D89',
-    marginTop: -2,
+    marginTop: pixelSizeHorizontal(-2),
   },
   delete: {
-    fontSize: 16,
+    fontSize: fontPixel(16),
     fontWeight: '500',
     lineHeight: 22.4,
     color: '#CE3A54',
   },
   footer: {
-    fontSize: 12,
+    fontSize: fontPixel(12),
     fontWeight: '400',
     color: '#C8C5CB',
     textAlign: 'center',
@@ -473,26 +525,26 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderTopEndRadius: 16,
     borderTopStartRadius: 16,
-    width: '100%',
-    height: 360,
-    marginTop: 560,
-    marginBottom: -1,
-    marginLeft: -1,
-    padding: 16,
+    width: widthPixel(100),
+    height: heightPixel(360),
+    marginTop: pixelSizeHorizontal(560),
+    marginBottom: pixelSizeHorizontal(-1),
+    marginLeft: pixelSizeVertical(-1),
+    padding: pixelSizeHorizontal(16),
     display: 'flex',
     justifyContent: 'flex-start',
   },
   notification: {
-    marginTop: 5,
+    marginTop: pixelSizeHorizontal(5),
   },
   modelNotify: {
-    marginBottom: 26,
+    marginBottom: pixelSizeHorizontal(26),
   },
   modelnotify2: {
-    marginTop: -0,
+    marginTop: pixelSizeHorizontal(-0),
   },
   model2: {
-    margin: 1,
+    margin: pixelSizeHorizontal(1),
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
@@ -502,41 +554,41 @@ const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 24,
-    paddingVertical: 32,
-    width: 280,
+    paddingHorizontal: pixelSizeHorizontal(24),
+    paddingVertical: pixelSizeVertical(32),
+    width: widthPixel(280),
     borderRadius: 16,
   },
   logouttext: {
-    fontSize: 20,
+    fontSize: fontPixel(20),
     fontWeight: '700',
     color: 'black',
     textAlign: 'center',
   },
   para: {
-    fontSize: 16,
+    fontSize: fontPixel(16),
     fontWeight: '400',
     lineHeight: 22.4,
     color: '#827D89',
     textAlign: 'center',
-    marginTop: 12,
+    marginTop: pixelSizeHorizontal(12),
   },
   cencelbtntext: {
-    fontSize: 16,
+    fontSize: fontPixel(16),
     fontWeight: '500',
     color: '#6A3EA1',
   },
   cencelbtn: {
-    width: 108,
+    width: widthPixel(108),
     borderWidth: 1,
     borderColor: '#6A3EA1',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 100,
-    marginTop: 48,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    marginTop: pixelSizeHorizontal(48),
+    paddingHorizontal: pixelSizeHorizontal(16),
+    paddingVertical: pixelSizeVertical(8),
   },
   yesBtn: {
     backgroundColor: '#6A3EA1',

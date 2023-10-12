@@ -7,7 +7,7 @@ import {
   ScrollView,
   Button,
   TouchableOpacity,
-  ActivityIndicator
+  ActivityIndicator,
 } from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
@@ -16,11 +16,18 @@ import Icon from 'react-native-vector-icons/FontAwesome6';
 import IconF from 'react-native-vector-icons/FontAwesome';
 import * as Yup from 'yup';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ContextAuth } from './AuthContext';
+import {ContextAuth} from './AuthContext';
+import {
+  fontPixel,
+  heightPixel,
+  pixelSizeHorizontal,
+  pixelSizeVertical,
+  widthPixel,
+} from '../constants/responsive';
 const Register = () => {
   const navigation = useNavigation();
 
-  const [loading, setloading] = useState(false)
+  const [loading, setloading] = useState(false);
   const [fieldErrors, setFieldErrors] = useState({
     name: null,
     email: null,
@@ -64,7 +71,6 @@ const Register = () => {
       // If validation succeeds
 
       handleSubmit();
-
     } catch (errors) {
       const errorMessages = {};
       errors.inner.forEach(error => {
@@ -76,24 +82,27 @@ const Register = () => {
 
   const handleSubmit = async () => {
     try {
-      setloading(true)
-      const response = await fetch('http://192.168.50.64:3000/api/user/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      setloading(true);
+      const response = await fetch(
+        'http://192.168.50.64:3000/api/user/signup',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: formData.name,
+            email: formData.email,
+            password: formData.password,
+          }),
         },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
-        }),
-      });
+      );
       if (response.ok) {
-        setloading(false)
+        setloading(false);
         // const usersData = await response.json();
         // console.log("userData========>", usersData);
         // const token = usersData.token; // Correct way to access the token
-  
+
         // try {
         //   // Save user data and token separately
         //   await AsyncStorage.setItem("UserData", JSON.stringify(usersData));
@@ -107,15 +116,13 @@ const Register = () => {
         console.error('API Error - Status Code:', response.status);
         const responseText = await response.text();
         console.error('API Error - Response Text:', responseText);
-        setloading(false)
+        setloading(false);
       }
     } catch (error) {
       console.log(error);
-      setloading(false)
+      setloading(false);
     }
-
   };
-
 
   // const {AuthData} = useContext(ContextAuth);
 
@@ -217,12 +224,14 @@ const Register = () => {
             </Text>
           )}
 
-          <View style={{marginTop: 25}}>
+          <View style={{marginTop: 30}}>
             <View>
-              <TouchableOpacity onPress={handleRegister} disabled={loading} style={[styles.btn, loading && styles.btndisable]}>
+              <TouchableOpacity
+                onPress={handleRegister}
+                disabled={loading}
+                style={[styles.btn, loading && styles.btndisable]}>
                 <Text style={styles.text}>
-                  
-                  {loading ? ( <>Loading...</>):'Register'}
+                  {loading ? <>Loading...</> : 'Register'}
                 </Text>
                 <Icon
                   style={styles.icon}
@@ -249,75 +258,76 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 50,
+    marginTop: pixelSizeHorizontal(50),
   },
   reg: {
-    fontSize: 32,
+    fontSize: fontPixel(32),
     color: '#180E25',
     fontWeight: '700',
     fontFamily: 'Inter',
     lineHeight: 38.4,
+    // marginTop: pixelSizeHorizontal(2),
   },
   notesIdea: {
     color: '#827D89',
-    fontSize: 16,
-    marginTop: 20,
+    fontSize: fontPixel(16),
+    marginTop: pixelSizeHorizontal(10),
     fontFamily: 'Inter',
     lineHeight: 22.4,
   },
   input: {
     borderWidth: 1,
-    padding: 16,
+    padding: pixelSizeHorizontal(16),
     color: '#180E25',
-    width: 328,
+    width: widthPixel(328),
     borderColor: '#C8C5CB',
     borderRadius: 8,
-    height: 54,
+    height: heightPixel(54),
   },
 
   lable: {
     color: 'black',
-    fontSize: 16,
+    fontSize: fontPixel(16),
     fontWeight: '500',
-    marginVertical: 10,
+    marginVertical: pixelSizeVertical(10),
     lineHeight: 22.4,
   },
   inputParent: {
-    marginTop: 20,
+    marginTop: pixelSizeHorizontal(10),
   },
   btn: {
     backgroundColor: '#6A3EA1',
-    paddingVertical: 15,
-    paddingHorizontal: 20,
+    paddingVertical: pixelSizeVertical(15),
+    paddingHorizontal: pixelSizeHorizontal(20),
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     borderRadius: 100,
-    width: 328,
-    height: 54,
+    width: widthPixel(328),
+    height: heightPixel(54),
   },
   text: {
     color: 'white',
-    fontSize: 16,
+    fontSize: fontPixel(16),
     fontWeight: '500',
-    paddingLeft: 115,
+    paddingLeft: pixelSizeVertical(115),
     lineHeight: 22.4,
     fontFamily: 'Inter',
   },
   icon: {
-    fontSize: 20,
+    fontSize: fontPixel(20),
     textAlign: 'right',
-    paddingLeft: 40,
+    paddingLeft: pixelSizeVertical(40),
   },
   eyeIcon: {
     display: 'flex',
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
-    marginTop: -53,
-    marginRight: 10,
+    marginTop: pixelSizeHorizontal(-53),
+    marginRight: pixelSizeVertical(10),
     textAlign: 'right',
-    width: 20,
+    width: widthPixel(20),
   },
 
   iconParent: {
@@ -325,7 +335,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'flex-end',
   },
-  btndisable:{
-    backgroundColor:'gray'
-  }
+  btndisable: {
+    backgroundColor: 'gray',
+  },
 });

@@ -7,7 +7,6 @@ import {
   View,
   TouchableOpacity,
   ScrollView,
-  Button,
 } from 'react-native';
 import React, {useEffect, useState, useContext} from 'react';
 import {useNavigation} from '@react-navigation/native';
@@ -20,6 +19,13 @@ import {ContextAuth} from './AuthContext';
 import Icon from 'react-native-vector-icons/FontAwesome6';
 import * as Yup from 'yup';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {
+  fontPixel,
+  heightPixel,
+  pixelSizeHorizontal,
+  pixelSizeVertical,
+  widthPixel,
+} from '../constants/responsive';
 
 const Login = () => {
   // const {login} = useContext(AuthContext)
@@ -38,9 +44,7 @@ const Login = () => {
   });
   const [googleLogin, setGoogleLogin] = useState(null);
   // console.log("id=====",googleLogin.user.id);
- 
-     
-
+  const navigation = useNavigation();
 
   const validationSchema = Yup.object().shape({
     email: Yup.string().email('Invalid email').required('Email is required'),
@@ -95,15 +99,14 @@ const Login = () => {
       if (response.ok) {
         setloading(false);
         const usersData = await response.json();
-        const userAuthData = usersData.existingUserByEmail
-        const token = usersData.token
-   
-        try {
-         await AsyncStorage.setItem("Token", token);
-         await AsyncStorage.setItem('UserData', JSON.stringify(userAuthData));
-            // console.log("Token Saved", token);
-        console.log("userAuthData Saved==",userAuthData);
+        const userAuthData = usersData.existingUserByEmail;
+        const token = usersData.token;
 
+        try {
+          await AsyncStorage.setItem('Token', token);
+          await AsyncStorage.setItem('UserData', JSON.stringify(userAuthData));
+          // console.log("Token Saved", token);
+          console.log('userAuthData Saved==', userAuthData);
         } catch (error) {
           console.log(error);
         }
@@ -116,33 +119,25 @@ const Login = () => {
       setloading(false);
     }
   };
-  // const {AuthData} = useContext(ContextAuth);
-
-  // useEffect(() => {
-  //   if (userData) {
-  //     AuthData(userData);
-  //   }
-  // }, [userData]);
 
   useEffect(() => {
     GoogleSignin.configure({webClientId: process.env.WEB_CLIENT_ID});
   }, []);
 
-  const navigation = useNavigation();
-
   const LoginBTN = () => {
     navigation.navigate('Register');
   };
 
-  // Google Login Function
   const signInGoogle = async () => {
     console.log('Login Start');
     try {
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
-      console.log("id-==========", userInfo.user.id)
-       const googlid =  await AsyncStorage.setItem("GoogleId",userInfo.user.id)
-      console.log("idsaved==");
+      console.log('userinfo.user-==========', userInfo.user);
+      const googlid = await AsyncStorage.setItem('GoogleId', userInfo.user.id);
+      const googleUserData = await AsyncStorage.setItem('GoogleUserData', JSON.stringify(userInfo.user));
+      console.log('idsaved==');
+      console.log('googleUserData Saved==');
       setGoogleLogin(userInfo);
       navigation.navigate('HomeScreen');
     } catch (error) {
@@ -174,7 +169,6 @@ const Login = () => {
   //Sign in with Facebook
 
   async function onFacebookButtonPress() {
-    // Attempt login with permissions
     const result = await LoginManager.logInWithPermissions([
       'public_profile',
       'email',
@@ -186,25 +180,22 @@ const Login = () => {
       throw 'User cancelled the login process';
     }
 
-    // Once signed in, get the users AccessToken
     const data = await AccessToken.getCurrentAccessToken();
 
     if (!data) {
       throw 'Something went wrong obtaining access token';
     }
 
-    // Create a Firebase credential with the AccessToken
     const facebookCredential = auth.FacebookAuthProvider.credential(
       data.accessToken,
     );
 
-    // Sign-in the user with the credential
     return auth().signInWithCredential(facebookCredential);
   }
 
-  const forgotPassword = ()=>{
-    navigation.navigate('ForgotPassword')
-  }
+  const forgotPassword = () => {
+    navigation.navigate('ForgotPassword');
+  };
 
   return (
     <ScrollView style={styles.main}>
@@ -248,7 +239,7 @@ const Login = () => {
             </Text>
           )}
           <TouchableOpacity onPress={forgotPassword}>
-          <Text style={styles.forgot}>Forgot Password</Text>
+            <Text style={styles.forgot}>Forgot Password</Text>
           </TouchableOpacity>
           <View style={{marginTop: 25}}>
             <TouchableOpacity
@@ -267,7 +258,6 @@ const Login = () => {
             </TouchableOpacity>
           </View>
 
-          {/* <Button title='Login' color={'red'} onPress={login()}/> */}
           <View style={styles.parentLine}>
             <View style={styles.left}></View>
             <Text style={styles.Or}>Or</Text>
@@ -316,10 +306,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 80,
+    marginTop: pixelSizeHorizontal(80),
   },
   login: {
-    fontSize: 32,
+    fontSize: fontPixel(32),
     color: '#180E25',
     fontWeight: '700',
     fontFamily: 'Inter',
@@ -327,95 +317,95 @@ const styles = StyleSheet.create({
   },
   notesIdea: {
     color: '#827D89',
-    fontSize: 16,
-    marginTop: 20,
+    fontSize: fontPixel(16),
+    marginTop: pixelSizeHorizontal(20),
     fontFamily: 'Inter',
   },
   input: {
     borderWidth: 1,
-    padding: 16,
+    padding: pixelSizeHorizontal(16),
     color: '#180E25',
-    width: 328,
+    width: widthPixel(328),
     borderColor: '#C8C5CB',
     borderRadius: 8,
-    height: 54,
+    height: heightPixel(54),
   },
 
   lable: {
     color: 'black',
-    fontSize: 16,
+    fontSize: fontPixel(16),
     fontWeight: '500',
-    marginVertical: 10,
+    marginVertical: pixelSizeVertical(10),
     lineHeight: 22.4,
   },
   inputParent: {
-    marginTop: 20,
+    marginTop: pixelSizeHorizontal(20),
   },
 
   forgot: {
     color: '#6A3EA1',
-    fontSize: 16,
-    marginVertical: 15,
+    fontSize: fontPixel(16),
+    marginVertical: pixelSizeVertical(15),
     fontWeight: '500',
     textDecorationLine: 'underline',
   },
   Or: {
     textAlign: 'center',
     color: '#827D89',
-    fontSize: 12,
+    fontSize: fontPixel(12),
     fontWeight: '500',
   },
   left: {
     backgroundColor: '#EFEEF0',
-    padding: 1,
-    height: 1,
-    width: 130,
-    marginTop: 10,
+    padding: pixelSizeHorizontal(1),
+    height: heightPixel(1),
+    width: widthPixel(130),
+    marginTop: pixelSizeHorizontal(10),
   },
   right: {
     backgroundColor: '#EFEEF0',
-    padding: 1,
-    height: 1,
-    width: 130,
-    marginTop: 10,
+    padding: pixelSizeHorizontal(1),
+    height: heightPixel(1),
+    width: widthPixel(130),
+    marginTop: pixelSizeHorizontal(10),
   },
   parentLine: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginVertical: 20,
+    marginVertical: pixelSizeVertical(20),
   },
   btn: {
     backgroundColor: 'transparent',
-    paddingVertical: 15,
-    paddingHorizontal: 20,
+    paddingVertical: pixelSizeVertical(15),
+    paddingHorizontal: pixelSizeHorizontal(20),
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 100,
-    width: 320,
+    width: widthPixel(320),
     borderColor: '#C8C5CB',
     borderWidth: 1,
   },
   text: {
     color: '#6A3EA1',
-    fontSize: 16,
+    fontSize: fontPixel(16),
     fontWeight: '500',
-    paddingLeft: 15,
+    paddingLeft: pixelSizeVertical(16),
   },
   registerHere: {
     color: '#6A3EA1',
-    fontSize: 16,
+    fontSize: fontPixel(16),
     textAlign: 'center',
-    marginTop: 30,
+    marginTop: pixelSizeHorizontal(30),
     lineHeight: 22.4,
     fontWeight: '500',
   },
   iconParent: {
-    width: 45,
-    height: 45,
+    width: widthPixel(45),
+    height: heightPixel(45),
     backgroundColor: 'white',
     display: 'flex',
     justifyContent: 'center',
@@ -432,7 +422,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     columnGap: 15,
-    paddingTop: 5,
+    paddingTop: pixelSizeHorizontal(5),
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -441,27 +431,27 @@ const styles = StyleSheet.create({
   },
   btn: {
     backgroundColor: '#6A3EA1',
-    paddingVertical: 15,
-    paddingHorizontal: 20,
+    paddingVertical: pixelSizeVertical(15),
+    paddingHorizontal: pixelSizeHorizontal(20),
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     borderRadius: 100,
-    width: 328,
-    height: 54,
+    width: widthPixel(328),
+    height: heightPixel(54),
   },
   text: {
     color: 'white',
-    fontSize: 16,
+    fontSize: fontPixel(16),
     fontWeight: '500',
-    paddingLeft: 115,
+    paddingLeft: pixelSizeVertical(115),
     lineHeight: 22.4,
     fontFamily: 'Inter',
   },
   icon: {
-    fontSize: 20,
+    fontSize: fontPixel(20),
     textAlign: 'right',
-    paddingLeft: 40,
+    paddingLeft: pixelSizeVertical(40),
   },
 });

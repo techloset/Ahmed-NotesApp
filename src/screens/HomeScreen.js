@@ -12,6 +12,7 @@ import {useNavigation} from '@react-navigation/native';
 import PurpleBtn from '../components/PurpleBtn';
 import {useState} from 'react';
 import DATA from '../constants/FlatListData'
+import { fontPixel, pixelSizeHorizontal, pixelSizeVertical, widthPixel } from '../constants/responsive';
 
 
 const Item = () => (
@@ -35,7 +36,7 @@ const HomeScreen = () => {
   const [selectedId, setSelectedId] = useState();
 
   const renderItem = ({item}) => {
-    const backgroundColor = item.id === selectedId ? '#6e3b6e' : '#f9c2ff';
+    const backgroundColor = item.id === selectedId ? '#6e3b6e':'#f9c2ff';
     const color = item.id === selectedId ? 'white' : 'black';
 
     return (
@@ -64,7 +65,6 @@ const HomeScreen = () => {
             <Text style={styles.view}>View all</Text>
           </TouchableOpacity>
         </View>
-
     </View>
     
     
@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
   container2: {
     justifyContent: 'center',
     alignItems: "center",
-    marginTop:-3
+    marginTop: pixelSizeVertical(-3)
 
 
   },
@@ -147,27 +147,27 @@ const styles = StyleSheet.create({
     color: '#180E25'
   },
   text: {
-    fontSize: 14,
+    fontSize: fontPixel(14),
     fontWeight: '400',
     lineHeight: 19.6,
     color: "#827D89",
-    width: 237,
+    width: widthPixel(237),
     textAlign: 'center',
-    marginTop: 20
+    marginTop: pixelSizeHorizontal(20)
   },
   pinned: {
     color: 'black',
-    fontSize: 14,
+    fontSize: fontPixel(14),
     fontWeight: '700',
     lineHeight: 19.6,
   },
   parent: {
-    padding: 16,
-    marginTop:16
+    padding: pixelSizeHorizontal(16),
+    marginTop:pixelSizeVertical(16)       
   },
   view: {
     color: '#6A3EA1',
-    fontSize: 12,
+    fontSize: fontPixel(12),
     textDecorationLine: 'underline'
   },
   header: {
@@ -177,27 +177,27 @@ const styles = StyleSheet.create({
   },
   card1: {
     backgroundColor: 'white',
-    width: 180,
+    width: widthPixel(180),
     borderRadius: 8,
-    marginHorizontal:16,
+    marginHorizontal:pixelSizeHorizontal(16),
   },
   titlecard: {
     color: 'black',
-    fontSize: 16,
+    fontSize: fontPixel(16),
     fontWeight: "500",
-    padding: 16
+    padding: pixelSizeHorizontal(16)
   },
   para: {
     color: 'black',
-    fontSize: 10,
-    marginTop: 10,
-    paddingHorizontal: 16
+    fontSize: fontPixel(10),
+    marginTop: pixelSizeHorizontal(10),
+    paddingHorizontal: pixelSizeHorizontal(16)
 
   },
   cardFooter: {
     backgroundColor: '#EFEEF0',
-    padding: 10,
-    marginTop: 20,
+    padding: pixelSizeHorizontal(10),
+    marginTop: pixelSizeVertical(20),
   },
 
 

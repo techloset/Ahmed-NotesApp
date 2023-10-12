@@ -2,6 +2,7 @@ import { Button, StyleSheet, Text, View, ScrollView, TouchableOpacity } from 're
 import React from 'react'
 import HeaderBack from '../components/HeaderBack'
 import BottomMenuBar from '../navigation/BottomMenuBar'
+import { fontPixel, heightPixel, pixelSizeHorizontal, widthPixel } from '../constants/responsive'
 
 const InterestingIdea = () => {
     return (
@@ -59,48 +60,48 @@ const styles = StyleSheet.create({
     },
     container: {
       
-        padding: 16
+        padding: pixelSizeHorizontal(16)
 
     },
     line: {
-        width: '100%',
-        height: 1,
+        width: widthPixel(100),
+        height: heightPixel(1),
         backgroundColor: '#EFEEF0',
-        marginTop: 35,
+        marginTop: pixelSizeHorizontal(35),
     },
     newIdea: {
-        fontSize: 32,
+        fontSize: fontPixel(32),
         fontWeight: "700",
         color: "#180E25",
     },
     para: {
-        fontSize: 16,
+        fontSize: fontPixel(16),
         fontWeight: '400',
         lineHeight: 22.4,
         color: '#827D89',
-        paddingHorizontal: 10,
-        marginTop: 20
+        paddingHorizontal: pixelSizeHorizontal(10),
+        marginTop: pixelSizeHorizontal(20)
     },
     reminder:{
-      fontSize:12,
+      fontSize: fontPixel(12),
       fontWeight:"400",
       lineHeight:14.52,
       color:"#827D89",
-      marginTop:25
+      marginTop: pixelSizeHorizontal(25)
     },
     btns:{
       width:'auto',
          borderRadius:100,
       backgroundColor:"#EFEEF0", 
-      marginTop:20,
+      marginTop: pixelSizeHorizontal(20),
       display:'flex',
       justifyContent:"center",
       alignItems:'center',
-      padding:8
+      padding:pixelSizeHorizontal(8)
   
     },
     btntext:{
-      fontSize:12,
+      fontSize: fontPixel(12),
       fontWeight:'400',
       color:"#827D89"
     }

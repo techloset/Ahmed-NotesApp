@@ -1,5 +1,4 @@
 import {
-  Button,
   StyleSheet,
   Text,
   View,
@@ -12,6 +11,10 @@ import HeaderBack from '../components/HeaderBack';
 import {useNavigation} from '@react-navigation/native';
 import { ContextAuth } from './AuthContext';
 import * as Yup from "yup"
+import { fontPixel, heightPixel, pixelSizeHorizontal, pixelSizeVertical, widthPixel } from '../constants/responsive';
+
+
+
 const EmailCode = () => {
   const navigation = useNavigation();
   const [validationErrors, setValidationErrors] = useState({});
@@ -62,6 +65,7 @@ const EmailCode = () => {
             verifyCode: code
          })
       })
+      
   if(responce.ok){
     setLoading(false)
     const res = await responce.json()
@@ -169,11 +173,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    left: 16,
-    marginTop: 250,
+    left: pixelSizeVertical(16),
+    marginTop: pixelSizeHorizontal(250),
   },
   forgot: {
-    fontSize: 32,
+    fontSize: fontPixel(32),
     color: '#180E25',
     fontWeight: '700',
     fontFamily: 'Inter',
@@ -181,55 +185,55 @@ const styles = StyleSheet.create({
   },
   notesIdea: {
     color: '#827D89',
-    fontSize: 16,
-    marginTop: 20,
+    fontSize: fontPixel(16),
+    marginTop: pixelSizeHorizontal(20),
     fontFamily: 'Inter',
     lineHeight: 22.4,
     fontWeight: '400',
-    marginRight: 20,
+    marginRight: pixelSizeVertical(20),
   },
   lable: {
     color: 'black',
-    fontSize: 16,
+    fontSize: fontPixel(16),
     fontWeight: '500',
-    marginVertical: 10,
+    marginVertical: pixelSizeVertical(10),
     lineHeight: 22.4,
   },
   inputParent: {
-    marginTop: 30,
+    marginTop: pixelSizeHorizontal(30),
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
-    marginRight: 30,
+    marginRight: pixelSizeVertical(30),
   },
   btn: {
     backgroundColor: '#6A3EA1',
-    paddingVertical: 15,
-    paddingHorizontal: 20,
+    paddingVertical: pixelSizeVertical(15),
+    paddingHorizontal: pixelSizeHorizontal(20),
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 100,
-    width: 328,
-    height: 54,
+    width: widthPixel(328),
+    height: heightPixel(54),
   },
   text: {
     color: 'white',
-    fontSize: 16,
+    fontSize: fontPixel(16),
     fontWeight: '500',
     lineHeight: 22.4,
     fontFamily: 'Inter',
   },
   codeInput: {
-    width: 50,
-    height: 50,
+    width: widthPixel(50),
+    height:heightPixel(50),
     borderWidth: 1,
     borderColor: 'gray',
-    fontSize: 20,
+    fontSize: fontPixel(20),
     textAlign: 'center',
     borderRadius: 5,
-    marginRight: 10,
+    marginRight: pixelSizeVertical(10),
     color: 'black',
   },
   loadbtn:{

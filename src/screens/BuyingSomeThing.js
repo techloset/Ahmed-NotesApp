@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   ScrollView,
@@ -12,7 +12,7 @@ import HeaderBack from '../components/HeaderBack';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import CheckBox from '@react-native-community/checkbox';
 import BottomMenuBar from '../navigation/BottomMenuBar';
-import FinishedScreen from './FinishedScreen';
+import { fontPixel, heightPixel, pixelSizeHorizontal, pixelSizeVertical, widthPixel } from '../constants/responsive';
 
 const BuyingSomeThing = () => {
   const [newCheckboxLabel, setNewCheckboxLabel] = useState('');
@@ -30,7 +30,7 @@ const BuyingSomeThing = () => {
     try {
       setLoading(true); // Set loading to true when starting the API call
       const response = await fetch(
-        'http://192.168.50.64:3000/api/items/getItems'
+        'http://192.168.50.64:3000/api/items/getItems',
       ); // Replace with your API URL
       if (response.ok) {
         const data = await response.json();
@@ -45,9 +45,12 @@ const BuyingSomeThing = () => {
     }
   };
 
+
+
+
   const handleAddCheckbox = async () => {
     if (newCheckboxLabel.trim() !== '') {
-      const newItem = { id: Date.now(), label: newCheckboxLabel, checked: false };
+      const newItem = {id: Date.now(), label: newCheckboxLabel, checked: false};
 
       try {
         setLoading(true); // Set loading to true when starting the API call
@@ -63,7 +66,7 @@ const BuyingSomeThing = () => {
               checked: newItem.checked,
               label: newItem.label,
             }),
-          }
+          },
         );
 
         if (response.ok) {
@@ -83,20 +86,27 @@ const BuyingSomeThing = () => {
     }
   };
 
-  const handleDeleteCheckbox = async (id) => {
-    console.log("idddddd", id);
+
+
+
+
+  const handleDeleteCheckbox = async id => {
+    console.log('idddddd', id);
     try {
       setLoading(true); // Set loading to true when starting the API call
-      const response = await fetch('http://192.168.50.64:3000/api/items/deleteItem', {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json"
+      const response = await fetch(
+        'http://192.168.50.64:3000/api/items/deleteItem',
+        {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({id: id}),
         },
-        body: JSON.stringify({ id: id })
-      });
-  
+      );
+
       if (response.ok) {
-        setCheckboxList(checkboxList.filter(item => item.id !== id)); 
+        setCheckboxList(checkboxList.filter(item => item.id !== id));
       } else {
         console.error('Error deleting checkbox item');
       }
@@ -106,29 +116,35 @@ const BuyingSomeThing = () => {
       setLoading(false); // Set loading to false when the API call is complete
     }
   };
-  
-  
-  const handleCheckboxChange = async (id, checked) => {
-    
+
+
+
+
+
+  const handleCheckboxChange = async (id, checked,label) => {
     // Update the state of all checkboxes when one is clicked
-    const updatedList = checkboxList.map((item) =>
-    item.id === id ? { ...item, checked } : item
+    console.log("lable=====",label);
+    const updatedList = checkboxList.map(item =>
+      item.id === id ? {...item, checked} : item,
     );
     setCheckboxList(updatedList);
     if (checked) {
       setCheckedItems([...checkedItems, id]);
     } else {
-      setCheckedItems(checkedItems.filter((item) => item !== id));
+      setCheckedItems(checkedItems.filter(item => item !== id));
     }
     try {
       setLoading(true); // Set loading to true when starting the API call
-      const response = await fetch('http://192.168.50.64:3000/api/items/updatelist', {
-        method: 'PUT',
-        headers: {
-          'Content-type': 'application/json'
+      const response = await fetch(
+        'http://192.168.50.64:3000/api/items/updatelist',
+        {
+          method: 'PUT',
+          headers: {
+            'Content-type': 'application/json',
+          },
+          body: JSON.stringify({iid: id, checked: checked}),
         },
-        body: JSON.stringify({ iid: id, checked: checked })
-      });
+      );
 
       if (response.ok) {
         console.log(`Checkbox with ID ${id} is now ${checked ? true : false}`);
@@ -142,7 +158,7 @@ const BuyingSomeThing = () => {
     }
   };
 
-  const handleInputKeyPress = (event) => {
+  const handleInputKeyPress = event => {
     if (event.key === 'Enter') {
       handleAddCheckbox();
     }
@@ -159,21 +175,26 @@ const BuyingSomeThing = () => {
           </View>
 
           {loading ? (
-            <ActivityIndicator size="large" color="#6A3EA1" style={styles.loadingIndicator} />
+            <ActivityIndicator
+              size="large"
+              color="#6A3EA1"
+              style={styles.loadingIndicator}
+            />
           ) : (
-            <View style={{ marginTop: 20 }}>
-              {checkboxList.map((item) => (
+            <View style={{marginTop: 20}}>
+              {checkboxList.map(item => (
                 <View style={styles.checkBoxParent} key={item.id}>
                   <CheckBox
-                    style={{ marginTop: 6 }}
-                    tintColors={{ true: '#6A3EA1', false: 'gray' }}
+                    style={{marginTop: 6}}
+                    tintColors={{true: '#6A3EA1', false: 'gray'}}
                     value={item.checked}
-                    onValueChange={(newValue) => {
-                      handleCheckboxChange(item.id, newValue);
+                    onValueChange={newValue => {
+                      handleCheckboxChange(item.id, newValue, item.label);
                     }}
                   />
                   <Text style={styles.text}>&nbsp;{item.label}</Text>
-                  <TouchableOpacity onPress={() => handleDeleteCheckbox(item.id)}>
+                  <TouchableOpacity
+                    onPress={() => handleDeleteCheckbox(item.id)}>
                     <Icon name="delete" size={24} color="red" />
                   </TouchableOpacity>
                 </View>
@@ -184,7 +205,7 @@ const BuyingSomeThing = () => {
                     style={styles.input}
                     placeholder="Enter label for new checkbox"
                     value={newCheckboxLabel}
-                    onChangeText={(text) => setNewCheckboxLabel(text)}
+                    onChangeText={text => setNewCheckboxLabel(text)}
                     onKeyPress={handleInputKeyPress}
                     required={true}
                   />
@@ -221,68 +242,68 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   line: {
-    width: '100%',
-    height: 1,
+    width: widthPixel(100),
+    height: heightPixel(1),
     backgroundColor: '#EFEEF0',
-    marginTop: 30,
+    marginTop: pixelSizeHorizontal(30),
   },
   container: {
     flex: 1,
     justifyContent: 'center',
-    padding: 20,
+    padding: pixelSizeHorizontal(20),
   },
   buysome: {
     color: 'black',
-    fontSize: 32,
+    fontSize: fontPixel(32),
     fontWeight: '700',
     lineHeight: 38.4,
-    marginTop: 10,
+    marginTop: pixelSizeHorizontal(10),
   },
   checkBoxParent: {
     display: 'flex',
     flexDirection: 'row',
-    marginTop: 10,
+    marginTop: pixelSizeHorizontal(10),
     alignItems: 'center',
   },
   text: {
-    fontSize: 16,
+    fontSize: fontPixel(16),
     fontWeight: '500',
     color: '#180E25',
     lineHeight: 22.4,
-    marginTop: 5,
+    marginTop: pixelSizeHorizontal(5),
     flex: 1,
   },
   addCheckboxInput: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: pixelSizeHorizontal(20),
   },
   input: {
     flex: 1,
     borderWidth: 1,
     borderColor: '#6A3EA1',
     borderRadius: 5,
-    paddingVertical: 2,
-    paddingHorizontal: 12,
-    fontSize: 12,
+    paddingVertical: pixelSizeVertical(2),
+    paddingHorizontal: pixelSizeHorizontal(12),
+    fontSize: fontPixel(12),
     color: 'black',
   },
   addCheckboxBtn: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingHorizontal: pixelSizeHorizontal(12),
+    paddingVertical: pixelSizeVertical(8),
     borderRadius: 5,
-    marginLeft: 10,
+    marginLeft: pixelSizeVertical(10),
   },
   addcheck: {
     color: '#6A3EA1',
-    fontSize: 16,
+    fontSize: fontPixel(16),
     textDecorationLine: 'underline',
   },
   loadingIndicator: {
-    marginTop: 20,
+    marginTop: pixelSizeHorizontal(20),
   },
 });

@@ -4,6 +4,7 @@ import HeaderBack from '../components/HeaderBack'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import IconI from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
+import { fontPixel, heightPixel, pixelSizeHorizontal, pixelSizeVertical, widthPixel } from '../constants/responsive';
 const CreateNewNotes = () => {
 
   const navigation  = useNavigation()
@@ -114,42 +115,42 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   newNotes: {
-    fontSize: 16,
+    fontSize: fontPixel(16),
     fontWeight: "500",
     color: "#000000",
     textAlign: 'center',
-    marginTop: 13,
+    marginTop: pixelSizeHorizontal(13),
     lineHeight: 22.4
   },
   line: {
-    width: '100%',
-    height: 1,
+    width: widthPixel(100),
+    height: heightPixel(1),
     backgroundColor: '#EFEEF0',
-    marginTop: 20,
+    marginTop: pixelSizeHorizontal(20),
   },
   notes: {
     fontFamily: 'Inter',
     fontWeight: '700',
-    fontSize: 24,
+    fontSize: fontPixel(24),
     lineHeight: 28.8,
     color:'#000000',
-    marginTop: 40,
-    width:300,
-    height: 58
+    marginTop: pixelSizeHorizontal(40),
+    width: widthPixel(300),
+    height: heightPixel(58)
   },
   idea:{
     backgroundColor:'#6A3EA1',
-    height: 78,
-    width:328,
+    height: heightPixel(78),
+    width: widthPixel(328),
     borderRadius:8,
-    padding: 16,
+    padding: pixelSizeHorizontal(16),
     display:'flex',
     flexDirection:'row',
     alignItems:'center',
-    marginTop:35,
+    marginTop: pixelSizeHorizontal(35),
   },
    interestingIdea:{
-       fontSize: 16,
+       fontSize: fontPixel(16),
        fontWeight:'700',
        lineHeight: 22.4,
        color:'white'
@@ -157,37 +158,37 @@ const styles = StyleSheet.create({
    },
    bulb:{
     backgroundColor:'#3A2258',
-    padding:12,
+    padding: pixelSizeHorizontal(12),
     borderRadius:100,
-    width: 46,
-    height:46,
-    marginRight: 15
+    width: widthPixel(46),
+    height: heightPixel(46),
+    marginRight: pixelSizeVertical(15)
    },
    msg:{
     fontSize:12,
     fontWeight:'400',
     lineHeight:14.52,
-    marginTop:5
+    marginTop:pixelSizeHorizontal(5)
    },
    buying:{
     backgroundColor:'#60D889',
-    height: 78,
-    width:328,
+    height: heightPixel(78),
+    width: widthPixel(328),
     borderRadius:8,
-    padding: 16,
+    padding: pixelSizeHorizontal(16),
     display:'flex',
     flexDirection:'row',
     alignItems:'center',
-    marginTop:20,
+    marginTop: pixelSizeHorizontal(20),
 
    },
    cart:{
     backgroundColor:'#1F7F40',
-    padding:12,
+    padding: pixelSizeHorizontal(12),
     borderRadius:100,
-    width: 46,
-    height:46,
-    marginRight: 15,
+    width: widthPixel(46),
+    height: heightPixel(46),
+    marginRight: pixelSizeVertical(15),
     display:'flex',
     justifyContent:"center",
     alignItems:'center'

@@ -3,6 +3,7 @@ import React from 'react'
 import WhiteButton from '../components/WhiteButton'
 import { StatusBar } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { fontPixel, heightPixel, pixelSizeHorizontal, widthPixel } from '../constants/responsive';
 
 const LoadingScreen = () => {
   return (    <>
@@ -34,15 +35,15 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end"
   },
   image: {
-    width: 280,
-    height: 280,
-    top:70,
+    width: widthPixel(280),
+    height: heightPixel(280),
+    top: pixelSizeHorizontal(70),
   },
   para:{
     color:"white",
-    fontSize:20,
+    fontSize:fontPixel(20),
     fontWeight:'700',
-    paddingHorizontal:5,
+    paddingHorizontal: pixelSizeHorizontal(5),
     lineHeight: 28
   }
 });

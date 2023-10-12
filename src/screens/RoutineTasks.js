@@ -12,7 +12,14 @@ import IconA from 'react-native-vector-icons/AntDesign';
 import IconO from 'react-native-vector-icons/MaterialCommunityIcons';
 import NotesCard from '../constants/NotesCard';
 import BottomMenuBar from '../navigation/BottomMenuBar';
+import { useNavigation } from '@react-navigation/native';
+import { fontPixel, heightPixel, pixelSizeHorizontal, pixelSizeVertical, widthPixel } from '../constants/responsive';
 const RoutineTasks = () => {
+const navigation = useNavigation()
+  const handlesubtask = () =>{
+    navigation.navigate("Goals")
+  }
+
   return (
     <View style={{flex:1}}>
         <View style={styles.container}>
@@ -20,7 +27,7 @@ const RoutineTasks = () => {
             <HeaderBack title="Back" />
             <TouchableOpacity>
               <View style={styles.SubBtn}>
-                <Text style={styles.subText}>+ Add Sub Notes</Text>
+                <Text style={styles.subText} onPress={handlesubtask}>+ Add Sub Notes</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -41,7 +48,7 @@ const RoutineTasks = () => {
                 marginTop: 30,
                 marginHorizontal: 12,
               }}>
-              <Icons name={item.dragindicator} size={30} color={'#C8C5CB'} />
+              <Icons name={item.dragindicator} size={20} color={'#C8C5CB'} />
               <View style={styles.TitleCard}>
                 <View style={styles.Cardheader}>
                   <View style={styles.circle}></View>
@@ -53,7 +60,7 @@ const RoutineTasks = () => {
                   <Text style={styles.cardText}>{item.desc}</Text>
                 </View>
               </View>
-              <Icons name={item.iconClose} size={30} color={'#C8C5CB'} />
+              <Icons name={item.iconClose} size={20} color={'#C8C5CB'} />
             </View>
           );
         })}
@@ -66,7 +73,7 @@ const RoutineTasks = () => {
             marginTop: 30,
             marginHorizontal: 12,
           }}>
-          <Icons name="drag-indicator" size={30} color={'#C8C5CB'} />
+          <Icons name="drag-indicator" size={20} color={'#C8C5CB'} />
           <View style={[styles.TitleCard, styles.titleCard2]}>
             <View style={styles.Cardheader}>
               <View style={[styles.circle]}></View>
@@ -81,7 +88,7 @@ const RoutineTasks = () => {
               </Text>
             </View>
           </View>
-          <Icons name="close" size={30} color={'#C8C5CB'} />
+          <Icons name="close" size={20} color={'#C8C5CB'} />
         </View>
 
         <View
@@ -104,7 +111,7 @@ const RoutineTasks = () => {
             marginTop: 30,
             marginHorizontal: 12,
           }}>
-          <Icons name="drag-indicator" size={30} color={'#C8C5CB'} />
+          <Icons name="drag-indicator" size={20} color={'#C8C5CB'} />
           <View style={[styles.TitleCard, styles.completeCard]}>
             <View style={styles.Cardheader}>
               {/* <View style={styles.circle}> */}
@@ -129,7 +136,7 @@ const RoutineTasks = () => {
               </Text>
             </View>
           </View>
-          <Icons name="close" size={30} color={'#C8C5CB'} />
+          <Icons name="close" size={20} color={'#C8C5CB'} />
         </View>
 
         <View
@@ -140,7 +147,7 @@ const RoutineTasks = () => {
             marginTop: 30,
             marginHorizontal: 12,
           }}>
-          <Icons name="drag-indicator" size={30} color={'#C8C5CB'} />
+          <Icons name="drag-indicator" size={20} color={'#C8C5CB'} />
           <View
             style={[styles.TitleCard, styles.titleCard2, styles.completeCard2]}>
             <View style={styles.Cardheader}>
@@ -176,7 +183,7 @@ const RoutineTasks = () => {
               </Text>
             </View>
           </View>
-          <Icons name="close" size={30} color={'#C8C5CB'} />
+          <Icons name="close" size={20} color={'#C8C5CB'} />
         </View>
       </ScrollView>
       <BottomMenuBar />
@@ -189,24 +196,25 @@ export default RoutineTasks;
 const styles = StyleSheet.create({
   main: {
     backgroundColor: 'white',
+    // paddingHorizontal:16
   },
   container: {
     backgroundColor:'white'
   },
   SubBtn: {
     backgroundColor: '#6A3EA1',
-    height: 38,
-    width: 175,
+    height: heightPixel(38),
+    width: widthPixel(175),
     borderRadius: 100,
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    marginEnd: 10,
-    marginTop: 10,
+    marginEnd: pixelSizeVertical(10),
+    marginTop: pixelSizeHorizontal(10),
   },
   subText: {
     color: '#FFFFFF',
-    fontSize: 16,
+    fontSize: fontPixel(16),
     fontWeight: '500',
   },
   header: {
@@ -215,50 +223,50 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   line: {
-    width: '100%',
-    height: 1,
+    width: widthPixel(100),
+    height: heightPixel(1),
     backgroundColor: '#EFEEF0',
-    marginTop: 20,
+    marginTop: pixelSizeHorizontal(20),
   },
   activeSubNotes: {
     color: '#827D89',
-    fontSize: 10,
+    fontSize: fontPixel(10),
     fontWeight: '400',
   },
   TitleCard: {
     backgroundColor: '#F7F6D4',
     borderRadius: 8,
-    width: 272,
+    width: widthPixel(272),
   },
   title: {
-    fontSize: 16,
+    fontSize: fontPixel(16),
     fontWeight: '700',
     lineHeight: 22.4,
     color: '#565510',
   },
   circle: {
     borderWidth: 1,
-    width: 24,
-    height: 24,
-    padding: 4,
+    width: widthPixel(24),
+    height: heightPixel(24),
+    padding: pixelSizeHorizontal(4),
     backgroundColor: 'white',
     borderColor: '#C8C5CB',
     borderRadius: 100,
-    marginEnd: 8,
+    marginEnd: pixelSizeVertical(8),
   },
   Cardheader: {
     display: 'flex',
     flexDirection: 'row',
-    padding: 12,
+    padding: pixelSizeHorizontal(12),
   },
   Cardline: {
     width: '100%',
-    height: 1,
+    height: heightPixel(1),
     backgroundColor: '#565510',
-    marginTop: 3,
+    marginTop: pixelSizeHorizontal(3),
   },
   cardText: {
-    fontSize: 14,
+    fontSize: fontPixel(14),
     fontWeight: '400',
     lineHeight: 19.6,
     color: '#565510',

@@ -1,27 +1,33 @@
 import {
-  Button,
   StyleSheet,
   Text,
   View,
   TextInput,
   ScrollView,
   StatusBar,
-  TouchableOpacity
+  TouchableOpacity,
 } from 'react-native';
-import React, { useContext, useState } from 'react';
+import React, {useContext, useState} from 'react';
 import HeaderBack from '../components/HeaderBack';
-import PurpleBtn from '../components/PurpleBtn';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import * as Yup from 'yup';
-import { ContextAuth } from './AuthContext';
+import {ContextAuth} from './AuthContext';
+import {
+  fontPixel,
+  heightPixel,
+  pixelSizeHorizontal,
+  pixelSizeVertical,
+  widthPixel,
+} from '../constants/responsive';
 
 const CreateNewPassword = () => {
   const navigation = useNavigation();
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const {userCode} = useContext(ContextAuth);
 
   const validationSchema = Yup.object().shape({
     password: Yup.string()
@@ -32,45 +38,42 @@ const CreateNewPassword = () => {
       .required('Confirm Password is required'),
   });
 
-
   const handleFieldFocus = fieldName => {
-    // Clear the error message when a field is focused
     setPasswordError({...passwordError, [fieldName]: null});
   };
 
- const  {userCode} = useContext(ContextAuth)
-// console.log(userCode,"==================================");
-
-
   const handleSubmit = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
-      await validationSchema.validate({ password, confirmPassword }, { abortEarly: false });
+      await validationSchema.validate(
+        {password, confirmPassword},
+        {abortEarly: false},
+      );
 
-      const responce = await fetch('http://192.168.50.64:3000/api/user/createnewPassword',{
-        method:'POST',
-        headers:{
-          'Content-Type': 'application/json'
+      const responce = await fetch(
+        'http://192.168.50.64:3000/api/user/createnewPassword',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
           },
-          body:JSON.stringify({password:password, verifyCode:userCode})
-
-          
-      })
-      if(responce.ok){
-        setLoading(false)
+          body: JSON.stringify({password: password, verifyCode: userCode}),
+        },
+      );
+      if (responce.ok) {
+        setLoading(false);
         console.log('Password is valid:', password);
-        navigation.navigate("Login")
-
+        navigation.navigate('Login');
       }
     } catch (error) {
-      setLoading(false)
+      setLoading(false);
       const errorMessages = {};
       error.inner.forEach(err => {
         errorMessages[err.path] = err.message;
       });
       setPasswordError(errorMessages);
-    }finally{
-      setLoading(false)
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -109,7 +112,7 @@ const CreateNewPassword = () => {
             min. 6 characters, combination of 0-9, A-Z, a-z
           </Text>
         </View>
-        <View style={{ marginTop: 20 }}>
+        <View style={{marginTop: 20}}>
           <Text style={styles.label}>Retype New Password</Text>
           <TextInput
             style={styles.input}
@@ -120,12 +123,18 @@ const CreateNewPassword = () => {
             onFocus={() => handleFieldFocus('confirmPassword')}
           />
           {passwordError.confirmPassword && (
-            <Text style={styles.errorText}>{passwordError.confirmPassword}</Text>
+            <Text style={styles.errorText}>
+              {passwordError.confirmPassword}
+            </Text>
           )}
         </View>
-        <View style={{ marginTop: 40 }}>
-          <TouchableOpacity onPress={handleSubmit} style={[ styles.btn ,loading && styles.loadbtn]}>
-            <Text style={styles.text}>{loading?"Loading...":"Change Password"}</Text>
+        <View style={{marginTop: 40}}>
+          <TouchableOpacity
+            onPress={handleSubmit}
+            style={[styles.btn, loading && styles.loadbtn]}>
+            <Text style={styles.text}>
+              {loading ? 'Loading...' : 'Change Password'}
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -143,11 +152,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    left: 16,
-    marginTop: 140,
+    left: pixelSizeVertical(16),
+    marginTop: pixelSizeHorizontal(140),
   },
   forgot: {
-    fontSize: 32,
+    fontSize: fontPixel(32),
     color: '#180E25',
     fontWeight: '700',
     fontFamily: 'Inter',
@@ -155,70 +164,70 @@ const styles = StyleSheet.create({
   },
   notesIdea: {
     color: '#827D89',
-    fontSize: 16,
-    marginTop: 20,
+    fontSize: fontPixel(16),
+    marginTop: pixelSizeHorizontal(20),
     fontFamily: 'Inter',
     lineHeight: 22.4,
     fontWeight: '400',
   },
   notesIdea2: {
     color: '#827D89',
-    fontSize: 16,
+    fontSize: fontPixel(16),
     fontFamily: 'Inter',
     lineHeight: 22.4,
     fontWeight: '400',
   },
   input: {
     borderWidth: 1,
-    padding: 16,
+    padding: pixelSizeHorizontal(16),
     color: '#180E25',
-    width: 328,
+    width: widthPixel(328),
     borderColor: '#C8C5CB',
     borderRadius: 8,
-    height: 54,
+    height: heightPixel(54),
   },
   label: {
     color: 'black',
-    fontSize: 16,
+    fontSize: fontPixel(16),
     fontWeight: '500',
-    marginVertical: 10,
+    marginVertical: pixelSizeVertical(10),
     lineHeight: 22.4,
   },
   inputParent: {
-    marginTop: 50,
+    marginTop: pixelSizeHorizontal(50),
   },
   passwordValidation: {
     color: '#C8C5CB',
-    fontSize: 12,
+    fontSize: fontPixel(12),
     lineHeight: 14.52,
-    top: 5,
+    top: pixelSizeHorizontal(5),
   },
   btn: {
     backgroundColor: '#6A3EA1',
-    paddingVertical: 15,
-    paddingHorizontal: 20,
+    paddingVertical: pixelSizeVertical(15),
+    paddingHorizontal: pixelSizeHorizontal(20),
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 100,
-    width: 328,
-    height: 54,
+    width: widthPixel(328),
+    height: heightPixel(54),
   },
   text: {
     color: 'white',
-    fontSize: 16,
+    fontSize: fontPixel(16),
     fontWeight: '500',
     lineHeight: 22.4,
     fontFamily: 'Inter',
   },
   errorText: {
     color: 'red',
-    fontSize: 10,
-    width:"60%",
-    marginTop: 4,
+    fontSize: fontPixel(10),
+    width: '60%',
+    marginTop: pixelSizeHorizontal(4),
   },
-  loadbtn:{
-    backgroundColor:'gray'
-  }
+  loadbtn: {
+    backgroundColor: 'gray',
+  },
 });

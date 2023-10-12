@@ -3,6 +3,7 @@ import React from 'react'
 import HeaderBack from '../components/HeaderBack'
 import Icon from 'react-native-vector-icons/Octicons';
 import BottomMenuBar from '../navigation/BottomMenuBar';
+import { fontPixel, heightPixel, pixelSizeHorizontal, pixelSizeVertical, widthPixel } from '../constants/responsive';
 const Guidence = () => {
     return (
         <View style={styles.main}>
@@ -16,7 +17,7 @@ const Guidence = () => {
                 <Text style={styles.newIdea}>💡 New Product </Text>
                 <Text style={styles.newIdea}> Ideas</Text>
                 <View style={{marginTop:20}}>
-                    <Image source={require('../assects/images/laptop.png')} />
+                    <Image source={require('../assects/images/laptop.png')} style={styles.image} />
                     <View>
                       <TouchableOpacity style={{display:'flex', alignItems:"flex-end"}} >
                         <View style={styles.iconPencil}>
@@ -54,63 +55,67 @@ const styles = StyleSheet.create({
     },
     container: {
         
-        padding: 16
+        padding: pixelSizeHorizontal(16)
 
     },
     line: {
-        width: '100%',
-        height: 1,
+        width: widthPixel(100),
+        height: heightPixel(1),
         backgroundColor: '#EFEEF0',
-        marginTop: 35,
+        marginTop: pixelSizeHorizontal(35),
     },
     newIdea: {
-        fontSize: 32,
+        fontSize: fontPixel(32),
         fontWeight: "700",
         color: "#180E25",
     },
     para: {
-        fontSize: 16,
+        fontSize: fontPixel(16),
         fontWeight: '400',
         lineHeight: 22.4,
         color: '#827D89',
-        paddingHorizontal: 10,
-        marginTop: 20
+        paddingHorizontal: pixelSizeHorizontal(10),
+        marginTop: pixelSizeHorizontal(20)
     },
     reminder:{
-      fontSize:12,
+      fontSize: fontPixel(12),
       fontWeight:"400",
       lineHeight:14.52,
       color:"#827D89",
-      marginTop:25
+      marginTop: pixelSizeHorizontal(25)
     },
     btns:{
       width:'auto',
          borderRadius:100,
       backgroundColor:"#EFEEF0", 
-      marginTop:20,
+      marginTop:pixelSizeHorizontal(20),
       display:'flex',
       justifyContent:"center",
       alignItems:'center',
-      padding:8
+      padding: pixelSizeHorizontal(8)
   
     },
     btntext:{
-      fontSize:12,
+      fontSize: fontPixel(12),
       fontWeight:'400',
       color:"#827D89"
     },
     iconPencil:{
-      width:64,
-      height:64,
+      width: widthPixel(64),
+      height:heightPixel(64),
       borderRadius:100,
-      padding:16,
+      padding:  pixelSizeHorizontal(16),
       backgroundColor:'white',
       justifyContent:'center',
       alignItems:"center",
       position:'absolute',
-      bottom:10,
-      right:15
+      bottom:pixelSizeHorizontal(10),
+      right: pixelSizeVertical(15)
       
+    },
+    image:{
+        width: widthPixel(328),
+        height: heightPixel(260)
     }
 
 })
