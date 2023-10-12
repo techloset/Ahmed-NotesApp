@@ -158,6 +158,7 @@ const EditProfile = () => {
   }, []);
 
   const defaultProfileImage = require('../assects/images/user.png');
+  const googleLoggedInWithPicture = userInfog && userInfog.photo;
   return (
     <View style={styles.main}>
       <ScrollView>
@@ -176,10 +177,14 @@ const EditProfile = () => {
         <View style={styles.Profilepic}>
           <View key={profileImage || 'defaultImage'}>
           
-              <Image
-                source={userInfog && userInfog.photo ? { uri: userInfog.photo } : defaultProfileImage}
-                style={{ width: 120, height: 120, borderRadius: 100 }}
-              />
+          <Image
+              source={
+                googleLoggedInWithPicture ? { uri: userInfog.photo } : profileImage
+                  ? { uri: profileImage }
+                  : defaultProfileImage
+              }
+              style={{ width: 120, height: 120, borderRadius: 100 }}
+            />
             
           </View>
         </View>
