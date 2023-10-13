@@ -24,7 +24,7 @@ const EditProfile = () => {
   const [updatedname, setname] = useState('');
   const [updatedemail, setEmail] = useState('');
   const [profileImage, setProfileImage] = useState(null);
-  const [loading, setLoading] = useState(false); // Add loading state
+  const [loading, setLoading] = useState(false); 
   const [userInfog, setuserInfog] = useState()
 
 
@@ -70,7 +70,7 @@ const EditProfile = () => {
     setLoading(true)
     try {
       
-      const response = await fetch('http:/192.168.50.64:3000/api/user/editProfile',{
+      const response = await fetch('https://notesapp-backend-omega.vercel.app/api/user/editProfile',{
         method:'POST',
         headers:{
           "Content-Type":"application/json",
@@ -83,7 +83,7 @@ const EditProfile = () => {
         const updatedUserData = { ...userData, name: updatedname, email: updatedemail};
         await AsyncStorage.setItem('UserData', JSON.stringify(updatedUserData));
         
-        // Update the state
+       
         setUserData(updatedUserData);
         navigation.navigate('Login')
       }
@@ -94,7 +94,7 @@ const EditProfile = () => {
       setLoading(false)
     }
 
-    // Add code here to save user data
+   
   };
 
   const requestGalleryPermission = async () => {
@@ -123,13 +123,13 @@ const EditProfile = () => {
 
 
   const pickImage = () => {
-    setLoading(true); // Set loading to true when fetching new image
+    setLoading(true); 
     const options = {
       mediaType: 'photo',
       includeBase64: false,
     };
     launchImageLibrary(options, async (response) => {
-      setLoading(false); // Set loading to false when image fetch is done
+      setLoading(false); 
       console.log(response);
       if (response.didCancel) {
         console.log('User cancelled image picker');

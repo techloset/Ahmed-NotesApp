@@ -84,7 +84,7 @@ const Register = () => {
     try {
       setloading(true);
       const response = await fetch(
-        'http://192.168.50.64:3000/api/user/signup',
+        'https://notesapp-backend-omega.vercel.app/api/user/signup',
         {
           method: 'POST',
           headers: {
@@ -99,38 +99,20 @@ const Register = () => {
       );
       if (response.ok) {
         setloading(false);
-        // const usersData = await response.json();
-        // console.log("userData========>", usersData);
-        // const token = usersData.token; // Correct way to access the token
-
-        // try {
-        //   // Save user data and token separately
-        //   await AsyncStorage.setItem("UserData", JSON.stringify(usersData));
-        //   await AsyncStorage.setItem("Token", token);
-        //   console.log("User data and token saved:", usersData, token);
-        // } catch (error) {
-        //   console.error(error);
-        // }
+        Toast.success("Register Successfuly");
         navigation.navigate('Login');
       } else {
-        console.error('API Error - Status Code:', response.status);
-        const responseText = await response.text();
-        console.error('API Error - Response Text:', responseText);
         setloading(false);
+        Toast.error("Email Alreadt Exit");
       }
     } catch (error) {
       console.log(error);
       setloading(false);
+      Toast.error("Email Alreadt Exit");
     }
   };
 
-  // const {AuthData} = useContext(ContextAuth);
 
-  // useEffect(() => {
-  //   if (userData) {
-  //     AuthData(userData);
-  //   }
-  // }, [userData]);
 
   return (
     <ScrollView style={styles.main}>

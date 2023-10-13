@@ -18,7 +18,6 @@ import {
   widthPixel,
 } from '../constants/responsive';
 
-
 const ChangePassword = () => {
   return (
     <View style={styles.main}>

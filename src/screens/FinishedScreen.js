@@ -1,11 +1,11 @@
-import {StyleSheet, Text, View, StatusBar} from 'react-native';
-import React, {useEffect, useState} from 'react';
-import {ScrollView} from 'react-native-gesture-handler';
-import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import { StyleSheet, Text, View, StatusBar } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { ScrollView } from 'react-native-gesture-handler';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import CheckBox from '@react-native-community/checkbox';
 
-import {Image} from 'react-native';
-import {useFocusEffect} from '@react-navigation/native';
+import { Image } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import {
   fontPixel,
   pixelSizeHorizontal,
@@ -16,14 +16,17 @@ const FinishedScreen = () => {
   const [loading, setLoading] = useState(false);
   const [items, setItems] = useState([]);
   const [goals, setGoals] = useState([]);
-  // console.log(items)
+
+
+
+
   useFocusEffect(
     React.useCallback(() => {
       async function fetchItems() {
         try {
           setLoading(true);
           const response = await fetch(
-            'http://192.168.50.64:3000/api/items/finisheditems',
+            'https://notesapp-backend-omega.vercel.app/api/items/finisheditems',
             {
               method: 'GET',
               headers: {
@@ -41,8 +44,10 @@ const FinishedScreen = () => {
       }
 
       fetchItems();
-    }, []), // Pass an empty dependency array to run the effect only once
+    }, []),
   );
+
+
 
   useFocusEffect(
     React.useCallback(() => {
@@ -50,7 +55,7 @@ const FinishedScreen = () => {
         try {
           setLoading(true);
           const response = await fetch(
-            'http://192.168.50.64:3000/api/goalsItem/finishGoals',
+            'https://notesapp-backend-omega.vercel.app/api/goalsItem/finishGoals',
             {
               method: 'GET',
               headers: {
@@ -68,7 +73,7 @@ const FinishedScreen = () => {
       }
 
       fetchItems();
-    }, []), // Pass an empty dependency array to run the effect only once
+    }, []),
   );
 
   return (
@@ -84,12 +89,12 @@ const FinishedScreen = () => {
             <View style={styles.header}>
               <Text style={styles.journey}>Amazing Journey!</Text>
               <Text style={styles.textheader}>
-                You have successfully finished {items.length} notes
+                You have successfully finished {items.length + goals.length} notes
               </Text>
             </View>
             <View>
               <Image
-                style={{marginBottom: -20}}
+                style={{ marginBottom: -20 }}
                 source={require('../assects/images/finishHeader.png')}
               />
             </View>
@@ -110,7 +115,7 @@ const FinishedScreen = () => {
                 on the needs.
               </Text>
               <View style={styles.cardFooter}>
-                <Text style={{color: '#827D89', fontSize: 10}}>
+                <Text style={{ color: '#827D89', fontSize: 10 }}>
                   Interesting Idea
                 </Text>
               </View>
@@ -127,7 +132,7 @@ const FinishedScreen = () => {
                 }}>
                 <Image
                   source={require('../assects/images/laptop.png')}
-                  style={{width: 123, height: 80, borderRadius: 8}}
+                  style={{ width: 123, height: 80, borderRadius: 8 }}
                 />
               </View>
               <Text style={styles.para}>
@@ -136,7 +141,7 @@ const FinishedScreen = () => {
               </Text>
 
               <View style={[styles.cardFooter, styles.footer2]}>
-                <Text style={{color: 'white', fontSize: 10}}>
+                <Text style={{ color: 'white', fontSize: 10 }}>
                   Interesting Idea
                 </Text>
               </View>
@@ -150,7 +155,7 @@ const FinishedScreen = () => {
               <View style={[styles.card1, styles.listCard]}>
                 <Text style={styles.titlecard}> 🛒 Monthly Buy List</Text>
 
-                <View style={{marginLeft: 10}}>
+                <View style={{ marginLeft: 10 }}>
                   {loading ? (
                     <Text
                       style={{
@@ -166,8 +171,8 @@ const FinishedScreen = () => {
                         return (
                           <View key={i} style={styles.checkBoxParent}>
                             <CheckBox
-                              style={{marginTop: -3}}
-                              tintColors={{true: '#6A3EA1', false: 'gray'}}
+                              style={{ marginTop: -3 }}
+                              tintColors={{ true: '#6A3EA1', false: 'gray' }}
                               checked={true}
                               disabled={false}
                               value={true}
@@ -181,7 +186,7 @@ const FinishedScreen = () => {
                 </View>
 
                 <View style={[styles.cardFooter, styles.listCardFooter]}>
-                  <Text style={{color: 'black', fontSize: 10}}>
+                  <Text style={{ color: 'black', fontSize: 10 }}>
                     Interesting Idea
                   </Text>
                 </View>
@@ -195,7 +200,7 @@ const FinishedScreen = () => {
               <View style={[styles.card1, styles.listCard, styles.listCard2]}>
                 <Text style={styles.titlecard}> 🥅 Monthly Goals List</Text>
 
-                <View style={{marginLeft: 10}}>
+                <View style={{ marginLeft: 10 }}>
                   {loading ? (
                     <Text
                       style={{
@@ -211,8 +216,8 @@ const FinishedScreen = () => {
                         return (
                           <View key={i} style={styles.checkBoxParent}>
                             <CheckBox
-                              style={{marginTop: -3}}
-                              tintColors={{true: '#6A3EA1', false: 'gray'}}
+                              style={{ marginTop: -3 }}
+                              tintColors={{ true: '#6A3EA1', false: 'gray' }}
                               checked={true}
                               disabled={false}
                               value={true}
@@ -226,7 +231,7 @@ const FinishedScreen = () => {
                 </View>
 
                 <View style={[styles.cardFooter, styles.listCardFooter2]}>
-                  <Text style={{color: 'black', fontSize: 10}}>
+                  <Text style={{ color: 'black', fontSize: 10 }}>
                     Interesting Idea
                   </Text>
                 </View>
@@ -338,7 +343,7 @@ const styles = StyleSheet.create({
   listCardFooter2: {
     backgroundColor: '#DEDC52',
   },
-  parentcARDINSODE:{
+  parentcARDINSODE: {
     marginBottom: pixelSizeHorizontal(70)
   }
 });

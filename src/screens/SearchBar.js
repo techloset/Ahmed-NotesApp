@@ -8,7 +8,6 @@ import {
   TextInput,
 } from 'react-native';
 import React from 'react';
-import HeaderBack from '../components/HeaderBack';
 import BottomMenuBar from '../navigation/BottomMenuBar';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';

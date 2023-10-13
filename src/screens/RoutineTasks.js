@@ -9,7 +9,6 @@ import React from 'react';
 import HeaderBack from '../components/HeaderBack';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import IconA from 'react-native-vector-icons/AntDesign';
-import IconO from 'react-native-vector-icons/MaterialCommunityIcons';
 import NotesCard from '../constants/NotesCard';
 import BottomMenuBar from '../navigation/BottomMenuBar';
 import { useNavigation } from '@react-navigation/native';

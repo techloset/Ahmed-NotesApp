@@ -12,7 +12,13 @@ import HeaderBack from '../components/HeaderBack';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import CheckBox from '@react-native-community/checkbox';
 import BottomMenuBar from '../navigation/BottomMenuBar';
-import { fontPixel, heightPixel, pixelSizeHorizontal, pixelSizeVertical, widthPixel } from '../constants/responsive';
+import {
+  fontPixel,
+  heightPixel,
+  pixelSizeHorizontal,
+  pixelSizeVertical,
+  widthPixel,
+} from '../constants/responsive';
 
 const BuyingSomeThing = () => {
   const [newCheckboxLabel, setNewCheckboxLabel] = useState('');
@@ -22,16 +28,16 @@ const BuyingSomeThing = () => {
   const [checkedItems, setCheckedItems] = useState([]);
 
   useEffect(() => {
-    // Fetch items from your API when the component mounts
+  
     fetchItems();
   }, []);
 
   const fetchItems = async () => {
     try {
-      setLoading(true); // Set loading to true when starting the API call
+      setLoading(true); 
       const response = await fetch(
-        'http://192.168.50.64:3000/api/goalsItem/getGoals',
-      ); // Replace with your API URL
+        'https://notesapp-backend-omega.vercel.app/api/goalsItem/getGoals',
+      );
       if (response.ok) {
         const data = await response.json();
         setCheckboxList(data.items);
@@ -41,21 +47,18 @@ const BuyingSomeThing = () => {
     } catch (error) {
       console.error('Error fetching items', error);
     } finally {
-      setLoading(false); // Set loading to false when the API call is complete
+      setLoading(false); 
     }
   };
-
-
-
 
   const handleAddCheckbox = async () => {
     if (newCheckboxLabel.trim() !== '') {
       const newItem = {id: Date.now(), label: newCheckboxLabel, checked: false};
 
       try {
-        setLoading(true); // Set loading to true when starting the API call
+        setLoading(true);
         const response = await fetch(
-          'http://192.168.50.64:3000/api/goalsItem/buyItemGolas',
+          'https://notesapp-backend-omega.vercel.app/api/goalsItem/buyItemGolas',
           {
             method: 'POST',
             headers: {
@@ -81,21 +84,17 @@ const BuyingSomeThing = () => {
       } catch (error) {
         console.error('Error adding checkbox item', error);
       } finally {
-        setLoading(false); // Set loading to false when the API call is complete
+        setLoading(false); 
       }
     }
   };
 
-
-
-
-
   const handleDeleteCheckbox = async id => {
     console.log('idddddd', id);
     try {
-      setLoading(true); // Set loading to true when starting the API call
+      setLoading(true);
       const response = await fetch(
-        'http://192.168.50.64:3000/api/goalsItem/deleteGoals',
+        'https://notesapp-backend-omega.vercel.app/api/goalsItem/deleteGoals',
         {
           method: 'DELETE',
           headers: {
@@ -113,17 +112,12 @@ const BuyingSomeThing = () => {
     } catch (error) {
       console.error('Error deleting checkbox item', error);
     } finally {
-      setLoading(false); // Set loading to false when the API call is complete
+      setLoading(false); 
     }
   };
 
-
-
-
-
-  const handleCheckboxChange = async (id, checked,label) => {
-    // Update the state of all checkboxes when one is clicked
-    console.log("lable=====",label);
+  const handleCheckboxChange = async (id, checked, label) => {
+    console.log('lable=====', label);
     const updatedList = checkboxList.map(item =>
       item.id === id ? {...item, checked} : item,
     );
@@ -134,9 +128,9 @@ const BuyingSomeThing = () => {
       setCheckedItems(checkedItems.filter(item => item !== id));
     }
     try {
-      setLoading(true); // Set loading to true when starting the API call
+      setLoading(true); 
       const response = await fetch(
-        'http://192.168.50.64:3000/api/goalsItem/updateGoals',
+        'https://notesapp-backend-omega.vercel.app/api/goalsItem/updateGoals',
         {
           method: 'PUT',
           headers: {
@@ -154,7 +148,7 @@ const BuyingSomeThing = () => {
     } catch (error) {
       console.error('Error updating checkbox item', error);
     } finally {
-      setLoading(false); // Set loading to false when the API call is complete
+      setLoading(false); 
     }
   };
 
@@ -225,28 +219,34 @@ const BuyingSomeThing = () => {
               )}
             </View>
           )}
- <View style={styles.line}></View>
-                <View>
-                    <Text style={styles.reminder}>Reminder set on 15/07/2021, 18:30</Text>
-                </View>
-                <View style={{ display: "flex", flexDirection: "row", gap: 10, flexWrap: 'wrap' }}>
-                    <TouchableOpacity style={styles.btns}>
-                        <Text style={styles.btntext}>Important</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.btns}>
-                        <Text style={styles.btntext}>Top Priority</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.btns}>
-                        <Text style={styles.btntext}>Should Be Important in this week</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.btns}>
-                        <Text style={styles.btntext}>Important</Text>
-                    </TouchableOpacity>
-
-                </View>
-
-
-          {/* Rest of your component */}
+          <View style={styles.line}></View>
+          <View>
+            <Text style={styles.reminder}>
+              Reminder set on 15/07/2021, 18:30
+            </Text>
+          </View>
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              gap: 10,
+              flexWrap: 'wrap',
+            }}>
+            <TouchableOpacity style={styles.btns}>
+              <Text style={styles.btntext}>Important</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.btns}>
+              <Text style={styles.btntext}>Top Priority</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.btns}>
+              <Text style={styles.btntext}>
+                Should Be Important in this week
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.btns}>
+              <Text style={styles.btntext}>Important</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </ScrollView>
       <BottomMenuBar />
@@ -326,29 +326,27 @@ const styles = StyleSheet.create({
   loadingIndicator: {
     marginTop: pixelSizeHorizontal(20),
   },
-  reminder:{
+  reminder: {
     fontSize: fontPixel(12),
-    fontWeight:"400",
-    lineHeight:14.52,
-    color:"#827D89",
-    marginTop: pixelSizeHorizontal(25)
+    fontWeight: '400',
+    lineHeight: 14.52,
+    color: '#827D89',
+    marginTop: pixelSizeHorizontal(25),
   },
 
-  btns:{
-    width:'auto',
-    borderRadius:100,
-    backgroundColor:"#EFEEF0", 
+  btns: {
+    width: 'auto',
+    borderRadius: 100,
+    backgroundColor: '#EFEEF0',
     marginTop: pixelSizeHorizontal(20),
-    display:'flex',
-    justifyContent:"center",
-    alignItems:'center',
-    padding: pixelSizeHorizontal(8)
-
-
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: pixelSizeHorizontal(8),
   },
-  btntext:{
+  btntext: {
     fontSize: fontPixel(12),
-    fontWeight:'400',
-    color:"#827D89"
-  }
+    fontWeight: '400',
+    color: '#827D89',
+  },
 });

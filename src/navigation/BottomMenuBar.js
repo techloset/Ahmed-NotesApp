@@ -5,15 +5,35 @@ import {
   Button,
   Image,
   TouchableOpacity,
+  Linking
+
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useCallback} from 'react';
 import Icon from 'react-native-vector-icons/AntDesign';
 import IconF from 'react-native-vector-icons/Feather';
 import IconM from 'react-native-vector-icons/MaterialCommunityIcons';
 import IconMa from 'react-native-vector-icons/MaterialIcons';
-import IconE from 'react-native-vector-icons/EvilIcons';
 import {useNavigation} from '@react-navigation/native';
 import Modal from 'react-native-modal';
+
+
+
+
+
+const openAlarmApp = () => {
+  const alarmAppUrl = 'https://play.google.com/store/apps/details?id=ar.com.basejuegos.simplealarm&pcampaignid=web_share';
+
+  Linking.canOpenURL(alarmAppUrl).then((supported) => {
+    if (supported) {
+      Linking.openURL(alarmAppUrl);
+    } else {
+      console.log('Cannot open the alarm app. Make sure it is installed.');
+    }
+  });
+};
+
+
+
 const BottomMenuBar = () => {
   const [selectedColor, setSelectedColor] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
@@ -34,9 +54,19 @@ const BottomMenuBar = () => {
     setSelectedColor(true);
   };
 
+function handledelete() {
+  Toast.error("Notes Not be Availabel")
+}
+
+function openLanguageSettings() {
+  Toast.error("Only English Language Availabel")
+  
+}
+
   return (
     <>
       <View>
+        
         <Modal style={styles.model} isVisible={isModalVisible}>
           <View style={{display: 'flex', alignItems: 'flex-end'}}>
             <View
@@ -55,6 +85,7 @@ const BottomMenuBar = () => {
           </View>
           <View>
             <Text style={styles.changeBackground}>CHANGE BACKGROUND</Text>
+         
           </View>
           <View style={styles.colosparent}>
             <View onPress={applyBorder}>
@@ -102,86 +133,93 @@ const BottomMenuBar = () => {
                 borderColor: '#EFEEF0',
               }}></View>
             <Text style={[styles.changeBackground, styles.Extras]}>EXTRAS</Text>
-            <View style={styles.parentlist}>
-              <View style={{display: 'flex', flexDirection: 'row'}}>
-                <IconF
-                  style={{marginRight: 8, marginTop: 1}}
-                  name="clock"
-                  size={25}
-                  color={'black'}
-                />
-                <Text style={styles.remainder}>Set Reminder</Text>
-              </View>
-              <View>
+            <TouchableOpacity onPress={openAlarmApp}>
+              <View style={styles.parentlist}>
                 <View style={{display: 'flex', flexDirection: 'row'}}>
-                  <Text style={styles.leftmenu}>Not set </Text>
-                  <IconMa
-                    style={{marginLeft: 3}}
-                    name="arrow-forward-ios"
-                    size={10}
-                    color={'#827D89'}
+                  <IconF
+                    style={{marginRight: 8, marginTop: 1}}
+                    name="clock"
+                    size={25}
+                    color={'black'}
                   />
+                  <Text style={styles.remainder}>Set Reminder</Text>
+                </View>
+                <View>
+                  <View style={{display: 'flex', flexDirection: 'row'}}>
+                    <Text style={styles.leftmenu}>Not set </Text>
+                    <IconMa
+                      style={{marginLeft: 3}}
+                      name="arrow-forward-ios"
+                      size={10}
+                      color={'#827D89'}
+                    />
+                  </View>
                 </View>
               </View>
-            </View>
+            </TouchableOpacity>
 
-            <View style={styles.parentlist}>
-              <View style={{display: 'flex', flexDirection: 'row'}}>
-                <IconF
-                  style={{marginRight: 8}}
-                  name="edit"
-                  size={25}
-                  color={'black'}
-                />
-                <Text style={styles.remainder}>Change Note Type</Text>
-              </View>
-              <View>
+            <TouchableOpacity onPress={openLanguageSettings} >
+              <View style={styles.parentlist}>
                 <View style={{display: 'flex', flexDirection: 'row'}}>
-                  <Text style={styles.leftmenu}>Buying Some... </Text>
-                  <IconMa
-                    style={{marginLeft: 3}}
-                    name="arrow-forward-ios"
-                    size={10}
-                    color={'#827D89'}
+                  <IconF
+                    style={{marginRight: 8}}
+                    name="edit"
+                    size={25}
+                    color={'black'}
                   />
+                  <Text style={styles.remainder}>Change Note Type</Text>
+                </View>
+                <View>
+                  <View style={{display: 'flex', flexDirection: 'row'}}>
+                    <Text style={styles.leftmenu}>Buying Some... </Text>
+                    <IconMa
+                      style={{marginLeft: 3}}
+                      name="arrow-forward-ios"
+                      size={10}
+                      color={'#827D89'}
+                    />
+                  </View>
                 </View>
               </View>
-            </View>
-
-            <View style={styles.parentlist}>
-              <View style={{display: 'flex', flexDirection: 'row'}}>
-                <Icon
-                  style={{marginRight: 8}}
-                  name="tago"
-                  size={25}
-                  color={'black'}
-                />
-                <Text style={styles.remainder}>Give Label</Text>
-              </View>
-              <View>
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <View style={styles.parentlist}>
                 <View style={{display: 'flex', flexDirection: 'row'}}>
-                  <Text style={styles.leftmenu}>Not set </Text>
-                  <IconMa
-                    style={{marginLeft: 8}}
-                    name="arrow-forward-ios"
-                    size={10}
-                    color={'#827D89'}
+                  <Icon
+                    style={{marginRight: 8}}
+                    name="tago"
+                    size={25}
+                    color={'black'}
                   />
+                  <Text style={styles.remainder}>Give Label</Text>
+                </View>
+                <View>
+                  <View style={{display: 'flex', flexDirection: 'row'}}>
+                    <Text style={styles.leftmenu}>Not set </Text>
+                    <IconMa
+                      style={{marginLeft: 8}}
+                      name="arrow-forward-ios"
+                      size={10}
+                      color={'#827D89'}
+                    />
+                  </View>
                 </View>
               </View>
-            </View>
-
-            <View style={styles.parentlist}>
-              <View style={{display: 'flex', flexDirection: 'row'}}>
-                <Icon
-                  style={{marginRight: 8}}
-                  name="check"
-                  size={25}
-                  color={'black'}
-                />
-                <Text style={styles.remainder}>Mark as Finished</Text>
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <View style={styles.parentlist}>
+                <View style={{display: 'flex', flexDirection: 'row'}}>
+                  <Icon
+                    style={{marginRight: 8}}
+                    name="check"
+                    size={25}
+                    color={'black'}
+                  />
+                  <Text style={styles.remainder}>Mark as Finished</Text>
+                </View>
               </View>
-            </View>
+            </TouchableOpacity>
+
             <View
               style={{
                 borderBottomWidth: 1,
@@ -189,15 +227,19 @@ const BottomMenuBar = () => {
                 borderColor: '#EFEEF0',
               }}></View>
           </View>
-          <View style={{display: 'flex', flexDirection: 'row', marginTop: 12}}>
-            <Icon
-              style={{marginTop: 2, marginRight: 16}}
-              name="delete"
-              size={16}
-              color={'#CE3A54'}
-            />
-            <Text style={styles.delete}>Delete Note</Text>
-          </View>
+
+          <TouchableOpacity onPress={handledelete}>
+            <View
+              style={{display: 'flex', flexDirection: 'row', marginTop: 12}}>
+              <Icon
+                style={{marginTop: 2, marginRight: 16}}
+                name="delete"
+                size={16}
+                color={'#CE3A54'}
+              />
+              <Text style={styles.delete}>Delete Note</Text>
+            </View>
+          </TouchableOpacity>
         </Modal>
       </View>
 
@@ -278,6 +320,12 @@ const BottomMenuBar = () => {
 export default BottomMenuBar;
 
 const styles = StyleSheet.create({
+  container11: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor:"black"
+  },
   menuBar: {
     backgroundColor: 'white',
     borderTopColor: '#EFEEF0',

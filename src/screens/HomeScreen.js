@@ -8,8 +8,6 @@ import {
   TouchableOpacity,
   StatusBar,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import PurpleBtn from '../components/PurpleBtn';
 import {useState} from 'react';
 import DATA from '../constants/FlatListData'
 import { fontPixel, pixelSizeHorizontal, pixelSizeVertical, widthPixel } from '../constants/responsive';
@@ -49,11 +47,6 @@ const HomeScreen = () => {
     );
   };
 
-  // const navigation = useNavigation()
-
-  // const CreateNewNotes = () => {
-  //   navigation.navigate('CreateNewNotes')
-  // }
 
   return (
     <>
@@ -66,26 +59,6 @@ const HomeScreen = () => {
           </TouchableOpacity>
         </View>
     </View>
-    
-    
-    
-     
-    
-    
-    
-    
-    
-    
-     {/* <View style={styles.container}> */}
-      {/* <View>
-    //       <Image source={require('../assects/images/Home.png')} />
-    //     </View>
-    //     <Text style={styles.journey}>Start Your Journey</Text>
-    //     <Text style={styles.text}>Every big step start  with small step.
-    //       Notes your first idea and start
-    //       your journey!</Text>
-  //     <PurpleBtn title='New Notes'  func={CreateNewNotes}/> */}
-      {/* </View> */}
 
       <SafeAreaView style={styles.container}>
         <FlatList

@@ -42,15 +42,13 @@ const ForgotPassword = () => {
     try {
       await validateEmail.validate(email, {abortEarly: false});
 
-     const response = await fetch('http:/192.168.50.64:3000/api/user/forgotPassword', {
+     const response = await fetch('https://notesapp-backend-omega.vercel.app/api/user/forgotPassword', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({email:email.email, code:code}), 
       })
-
-
       if(response.ok){
         setLoading(false)
         navigation.navigate('EmailCode')
@@ -63,6 +61,7 @@ const ForgotPassword = () => {
         errorMessages[error.path] = error.message;
       });
       setFieldErrors(errorMessages);
+      Toast.success("Invaild Email");
     }finally{
       setLoading(false)
     }

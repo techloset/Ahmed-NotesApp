@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Switch,
   ActivityIndicator,
+  Button,
 } from 'react-native';
 import {DeviceEventEmitter} from 'react-native';
 import {ScrollView} from 'react-native';
@@ -23,32 +24,40 @@ import AuthContext, {ContextAuth} from '../auth/AuthContext';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useRoute} from '@react-navigation/native';
-import { fontPixel, heightPixel, pixelSizeHorizontal, pixelSizeVertical, widthPixel } from '../constants/responsive';
+import {
+  fontPixel,
+  heightPixel,
+  pixelSizeHorizontal,
+  pixelSizeVertical,
+  widthPixel,
+} from '../constants/responsive';
+import Toast from 'react-native-toast-message';
 
 const Settings = () => {
   const [isEnabled, setIsEnabled] = useState(false);
-  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
-
+  const [isEnabled2, setIsEnabled2] = useState(false);
+  
   const [isModalVisible, setModalVisible] = useState(false);
   const [isModalVisibleLogout, setModalVisibleLogout] = useState(false);
-
+  
   const [userData, setUserData] = useState('');
   const [profileImage, setProfileImage] = useState(null);
-  const [userInfog, setuserInfog] = useState()
+  const [userInfog, setuserInfog] = useState();
   const [isLoading, setIsLoading] = useState(true);
-// console.log(userInfog,"-=========================================");
   const route = useRoute();
 
+
+
+  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+  const toggleSwitch2 = () => setIsEnabled2(previousState => !previousState);
+
   useEffect(() => {
-    // Check if the user is already logged in (e.g., token exists in AsyncStorage)
     async function checkLoginStatus() {
       try {
         const storedData = await AsyncStorage.getItem('UserData');
         const userData = JSON.parse(storedData);
-        console.log('Data==', userData);
         setUserData(userData);
 
-        // Check if updatedUserData is passed as a parameter and update the state
         if (route.params && route.params.updatedUserData) {
           const updatedUserData = route.params.updatedUserData;
           setUserData(updatedUserData);
@@ -72,32 +81,26 @@ const Settings = () => {
     };
   }, [route.params]);
 
-
-
-  const getGoogleUser = async () =>{
-      try {
-       let googleData =  await AsyncStorage.getItem('GoogleUserData')
-       console.log("gogoogogoogg",googleData)
-       setuserInfog(JSON.parse(googleData))
-       setIsLoading(false)
-      } catch (error) {
-        console.log(error);
-      }
-  }
+  const getGoogleUser = async () => {
+    try {
+      let googleData = await AsyncStorage.getItem('GoogleUserData');
+      console.log('gogoogogoogg', googleData);
+      setuserInfog(JSON.parse(googleData));
+      setIsLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useFocusEffect(
-    React.useCallback(()=>{
-        getGoogleUser()
-      }, [])
-  )
-
-
-  
+    React.useCallback(() => {
+      getGoogleUser();
+    }, []),
+  );
 
   const editProfile = () => {
     navigation.navigate('EditProfile');
   };
-
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -113,42 +116,26 @@ const Settings = () => {
 
   const signOut = async () => {
     try {
+
       await delToken();
-
-      await GoogleSignin.signOut();
-
-      await fetch('http://192.168.50.64:3000/api/user/logout', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({token: userInfo.token}),
-      });
-      console.log('Logout Token ->', userInfo.token);
+      if (userInfog) {
+        if (GoogleSignin.hasPlayServices()) {
+          await GoogleSignin.signOut();
+        }
+      }
       navigation.navigate('Login');
-      AuthData(null);
     } catch (error) {
       console.error(error);
     }
     console.log('Logout');
   };
 
-
-
-
   const delToken = async () => {
     const deleteToken = await AsyncStorage.removeItem('Token');
     const deleteid = await AsyncStorage.removeItem('GoogleId');
     const deleteUserData = await AsyncStorage.removeItem('GoogleUserData');
     const removeImage = await AsyncStorage.removeItem('Profile');
-    console.log('deleteToken', deleteToken);
-    console.log('deleteGoogleIdData', deleteid);
-    console.log('deletedeleteUserData', deleteUserData);
-    navigation.navigate('Login');
   };
-
-
-
 
   const getProfileImage = async () => {
     try {
@@ -160,174 +147,176 @@ const Settings = () => {
   };
 
 
-  console.log("9----------userInfog-----------",userInfog);
+  const GoChangePassword = () =>{
+    navigation.navigate("ForgotPassword");
+  }
+
 
   return (
     <>
-
-{isLoading ? ( // Check if data is loading
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      {isLoading ? ( 
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
           <ActivityIndicator size="large" color="#6A3EA1" />
         </View>
       ) : (
         <View style={styles.main}>
-        <ScrollView>
-          <StatusBar
-            barStyle="dark-content"
-            hidden={false}
-            backgroundColor="white"
-          />
-          <View style={{display: 'flex', flexDirection: 'row', gap: 80}}>
-            <HeaderBack title="Back" />
-            <Text style={styles.newNotes}>Settings</Text>
-          </View>
-          <View style={styles.line}></View>
-
-          <View style={styles.ProfileInfo}>
-            <View>
-              { userInfog ? (
-                <Image
-                  source={{uri: userInfog.photo}}
-                  style={{width: 65, height: 65, borderRadius: 100}}
-                />
-              ) : (
-                <Image
-                  source={
-                    profileImage
-                      ? {uri: profileImage}
-                      : require('../assects/images/user.png')
-                  }
-                  style={{width: 65, height: 65, borderRadius: 100}}
-                />
-              )}
-            </View>
         
-            <View style={{marginTop: 10}}>
-              { userInfog && userData ? (
-                <Text style={styles.name}> {userInfog.name}</Text>
-              ) : (
-                <Text style={styles.name}> {userData.name}</Text>
-              )}
-              <View style={{display: 'flex', flexDirection: 'row', gap: 6}}>
-                <Icon
-                  name="mail"
-                  size={12}
-                  color={'#827D89'}
-                  style={{marginTop: 3}}
-                />
-                <Text style={{fontSize: 12, color: '#827D89'}}>
-                  {userInfog && userData ? (
-                    <Text> {userInfog.email}</Text>
-                  ) : (
-                    <Text> {userData.email}</Text>
-                  )}
-                </Text>
-              </View>
+          <ScrollView>
+            <StatusBar
+              barStyle="dark-content"
+              hidden={false}
+              backgroundColor="white"
+            />
+            <View style={{display: 'flex', flexDirection: 'row', gap: 80}}>
+              <HeaderBack title="Back" />
+              <Text style={styles.newNotes}>Settings</Text>
             </View>
-          </View>
-          <View style={{marginHorizontal: 16, marginTop: 20}}>
-            <TouchableOpacity style={styles.editBtn} onPress={editProfile}>
-              <View style={{display: 'flex', flexDirection: 'row'}}>
-                <Icon
-                  name="edit"
-                  size={16}
-                  color={'#6A3EA1'}
-                  style={{marginEnd: 5, marginTop: 3}}
-                />
-                <Text style={styles.textbtn}>Edit Profile</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-          <View style={[styles.line, styles.line2]}></View>
-          <View style={styles.appSetting}>
-            <Text style={styles.setting}>APP SETTINGS</Text>
-          </View>
+            <View style={styles.line}></View>
 
-          <View style={styles.parentlist}>
-            <View style={{display: 'flex', flexDirection: 'row'}}>
-              <IconF
-                style={{marginRight: 8, marginTop: -5}}
-                name="lock"
-                size={25}
-                color={'black'}
-              />
-              <Text style={styles.remainder}>Change Password</Text>
-            </View>
-            <View>
-              <View style={{display: 'flex', flexDirection: 'row'}}>
-                <IconMa
-                  style={{marginRight: 5}}
-                  name="arrow-forward-ios"
-                  size={16}
-                  color={'#827D89'}
-                />
-              </View>
-            </View>
-          </View>
-
-          <View style={styles.parentlist}>
-            <View style={{display: 'flex', flexDirection: 'row'}}>
-              <View style={{marginRight: 8, marginTop: -1}}>
-                <Image source={require('../assects/images/text-size.png')} />
-              </View>
-              <Text style={styles.remainder}>Text Size</Text>
-            </View>
-            <View>
-              <View style={{display: 'flex', flexDirection: 'row'}}>
-                <Text style={styles.leftmenu}>Medium</Text>
-              </View>
-            </View>
-          </View>
-
-          <TouchableOpacity onPress={toggleModal}>
-            <View style={styles.parentlist}>
-              <View style={{display: 'flex', flexDirection: 'row'}}>
-                <Icon
-                  style={{marginRight: 8, marginTop: -3}}
-                  name="bell"
-                  size={25}
-                  color={'black'}
-                />
-                <Text style={styles.remainder}>Notifications</Text>
-              </View>
+            <View style={styles.ProfileInfo}>
               <View>
-                <View style={{display: 'flex', flexDirection: 'row'}}>
-                  <Text style={styles.leftmenu}>All active</Text>
+                {userInfog ? (
+                  <Image
+                    source={{uri: userInfog.photo}}
+                    style={{width: 65, height: 65, borderRadius: 100}}
+                  />
+                ) : (
+                  <Image
+                    source={
+                      profileImage
+                        ? {uri: profileImage}
+                        : require('../assects/images/user.png')
+                    }
+                    style={{width: 65, height: 65, borderRadius: 100}}
+                  />
+                )}
+              </View>
+
+              <View style={{marginTop: 10}}>
+                {userInfog && userData ? (
+                  <Text style={styles.name}> {userInfog.name}</Text>
+                ) : (
+                  <Text style={styles.name}> {userData.name}</Text>
+                )}
+                <View style={{display: 'flex', flexDirection: 'row', gap: 6}}>
+                  <Icon
+                    name="mail"
+                    size={12}
+                    color={'#827D89'}
+                    style={{marginTop: 3}}
+                  />
+                  <Text style={{fontSize: 12, color: '#827D89'}}>
+                    {userInfog && userData ? (
+                      <Text> {userInfog.email}</Text>
+                    ) : (
+                      <Text> {userData.email}</Text>
+                    )}
+                  </Text>
                 </View>
               </View>
             </View>
-          </TouchableOpacity>
-
-          <View style={[styles.line, styles.line2]}></View>
-
-          <TouchableOpacity onPress={toggleLogout}>
-            <View
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                marginTop: 12,
-                marginLeft: 20,
-              }}>
-              <Iconm
-                style={{marginTop: 2, marginRight: 14}}
-                name="logout"
-                size={20}
-                color={'#CE3A54'}
-              />
-              <Text style={styles.delete}>Log Out</Text>
+            <View style={{marginHorizontal: 16, marginTop: 20}}>
+              <TouchableOpacity style={styles.editBtn} onPress={editProfile}>
+                <View style={{display: 'flex', flexDirection: 'row'}}>
+                  <Icon
+                    name="edit"
+                    size={16}
+                    color={'#6A3EA1'}
+                    style={{marginEnd: 5, marginTop: 3}}
+                  />
+                  <Text style={styles.textbtn}>Edit Profile</Text>
+                </View>
+              </TouchableOpacity>
             </View>
-          </TouchableOpacity>
+            <View style={[styles.line, styles.line2]}></View>
+            <View style={styles.appSetting}>
+              <Text style={styles.setting}>APP SETTINGS</Text>
+            </View>
+<TouchableOpacity onPress={GoChangePassword}>
 
-          <View style={{display: 'flex', marginTop: 200}}>
-            <Text style={styles.footer}>Makarya Notes v1.1</Text>
-          </View>
-        </ScrollView>
-      </View>
+            <View style={styles.parentlist}>
+              <View style={{display: 'flex', flexDirection: 'row'}}>
+                <IconF
+                  style={{marginRight: 8, marginTop: -5}}
+                  name="lock"
+                  size={25}
+                  color={'black'}
+                />
+                <Text style={styles.remainder}>Change Password</Text>
+              </View>
+              <View>
+                <View style={{display: 'flex', flexDirection: 'row'}}>
+                  <IconMa
+                    style={{marginRight: 5}}
+                    name="arrow-forward-ios"
+                    size={16}
+                    color={'#827D89'}
+                  />
+                </View>
+              </View>
+            </View>
+</TouchableOpacity>
+<TouchableOpacity>
+            <View style={styles.parentlist}>
+              <View style={{display: 'flex', flexDirection: 'row'}}>
+                <View style={{marginRight: 8, marginTop: -1}}>
+                  <Image source={require('../assects/images/text-size.png')} />
+                </View>
+                <Text style={styles.remainder}>Text Size</Text>
+              </View>
+              <View>
+                <View style={{display: 'flex', flexDirection: 'row'}}>
+                  <Text style={styles.leftmenu}>Medium</Text>
+                </View>
+              </View>
+            </View>
+</TouchableOpacity>
+
+            <TouchableOpacity onPress={toggleModal}>
+              <View style={styles.parentlist}>
+                <View style={{display: 'flex', flexDirection: 'row'}}>
+                  <Icon
+                    style={{marginRight: 8, marginTop: -3}}
+                    name="bell"
+                    size={25}
+                    color={'black'}
+                  />
+                  <Text style={styles.remainder}>Notifications</Text>
+                </View>
+                <View>
+                  <View style={{display: 'flex', flexDirection: 'row'}}>
+                    <Text style={styles.leftmenu}>All active</Text>
+                  </View>
+                </View>
+              </View>
+            </TouchableOpacity>
+
+            <View style={[styles.line, styles.line2]}></View>
+
+            <TouchableOpacity onPress={toggleLogout}>
+              <View
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  marginTop: 12,
+                  marginLeft: 20,
+                }}>
+                <Iconm
+                  style={{marginTop: 2, marginRight: 14}}
+                  name="logout"
+                  size={20}
+                  color={'#CE3A54'}
+                />
+                <Text style={styles.delete}>Log Out</Text>
+              </View>
+            </TouchableOpacity>
+
+            <View style={{display: 'flex', marginTop: 200}}>
+              <Text style={styles.footer}>Makarya Notes v1.1</Text>
+            </View>
+          </ScrollView>
+        </View>
       )}
-
-
-
-      
 
       <View>
         <Modal style={styles.model} isVisible={isModalVisible}>
@@ -368,7 +357,7 @@ const Settings = () => {
           <View style={[styles.parentlist, styles.modelnotify2]}>
             <View style={{display: 'flex', flexDirection: 'row'}}>
               <Text style={[styles.remainder, styles.notification]}>
-                Email Notifications
+                Push Notifications
               </Text>
             </View>
             <View>
@@ -376,10 +365,10 @@ const Settings = () => {
                 <View style={styles.container}>
                   <Switch
                     trackColor={{false: '#EFE9F7', true: '#EFE9F7'}}
-                    thumbColor={isEnabled ? '#6A3EA1' : '#EFE9F7'}
+                    thumbColor={isEnabled2 ? '#6A3EA1' : '#EFE9F7'}
                     ios_backgroundColor="#3e3e3e"
-                    onValueChange={toggleSwitch}
-                    value={isEnabled}
+                    onValueChange={toggleSwitch2}
+                    value={isEnabled2}
                   />
                 </View>
               </View>
@@ -426,7 +415,6 @@ const styles = StyleSheet.create({
   main: {
     flex: 1,
     backgroundColor: 'white',
-    // paddingLeft:16,
   },
 
   line: {
@@ -525,7 +513,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderTopEndRadius: 16,
     borderTopStartRadius: 16,
-    width: widthPixel(100),
+    width: '100%',
     height: heightPixel(360),
     marginTop: pixelSizeHorizontal(560),
     marginBottom: pixelSizeHorizontal(-1),

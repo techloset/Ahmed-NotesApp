@@ -43,7 +43,6 @@ const Login = () => {
     password: '',
   });
   const [googleLogin, setGoogleLogin] = useState(null);
-  // console.log("id=====",googleLogin.user.id);
   const navigation = useNavigation();
 
   const validationSchema = Yup.object().shape({
@@ -58,37 +57,32 @@ const Login = () => {
   };
 
   const handleFieldFocus = fieldName => {
-    // Clear the error message when a field is focused
     setFieldErrors({...fieldErrors, [fieldName]: null});
   };
 
   const handleLogin = async () => {
     try {
-      // Validate the form data against the schema
       await validationSchema.validate(formData, {abortEarly: false});
 
-      // If validation succeeds,
       handleSubmit();
     } catch (errors) {
+      Toast.error("Something Went Wrong");
       const errorMessages = {};
       errors.inner.forEach(error => {
         errorMessages[error.path] = error.message;
       });
       setFieldErrors(errorMessages);
+      Toast.error("Something Went Wrong");
     }
   };
 
   const handleSubmit = async () => {
     try {
       setloading(true);
-      // const token = await AsyncStorage.getItem('Token');
-      // console.log('token in login ', token);
-
-      const response = await fetch('http:/192.168.50.64:3000/api/user/signin', {
+      const response = await fetch('https://notesapp-backend-omega.vercel.app/api/user/signin', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          // Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           email: formData.email,
@@ -101,29 +95,28 @@ const Login = () => {
         const usersData = await response.json();
         const userAuthData = usersData.existingUserByEmail;
         const token = usersData.token;
+        Toast.success("Login Successfully");
 
         try {
           await AsyncStorage.setItem('Token', token);
           await AsyncStorage.setItem('UserData', JSON.stringify(userAuthData));
-          // console.log("Token Saved", token);
           console.log('userAuthData Saved==', userAuthData);
         } catch (error) {
           console.log(error);
+          Toast.error("Something Went Wrong");
         }
         navigation.navigate('HomeScreen');
       }
     } catch (error) {
       console.log('errorrr', error);
+      Toast.error("Something Went Wrong");
       setloading(false);
     } finally {
       setloading(false);
     }
   };
 
-  useEffect(() => {
-    GoogleSignin.configure({webClientId: process.env.WEB_CLIENT_ID});
-  }, []);
-
+ 
   const LoginBTN = () => {
     navigation.navigate('Register');
   };
@@ -135,7 +128,10 @@ const Login = () => {
       const userInfo = await GoogleSignin.signIn();
       console.log('userinfo.user-==========', userInfo.user);
       const googlid = await AsyncStorage.setItem('GoogleId', userInfo.user.id);
-      const googleUserData = await AsyncStorage.setItem('GoogleUserData', JSON.stringify(userInfo.user));
+      const googleUserData = await AsyncStorage.setItem(
+        'GoogleUserData',
+        JSON.stringify(userInfo.user),
+      );
       console.log('idsaved==');
       console.log('googleUserData Saved==');
       setGoogleLogin(userInfo);
@@ -275,15 +271,11 @@ const Login = () => {
                 style={styles.iconParent}>
                 <Image source={require('../assects/images/facebook.png')} />
               </TouchableOpacity>
-              {/* <TouchableOpacity style={styles.iconParent}>
-            <Image source={require('../../assets/apple.png')} />
-          </TouchableOpacity> */}
+
             </View>
 
-            {/* <TouchableOpacity style={styles.btn} onPress={handleSubmit}>
-              <Image source={require('../assects/images/google.png')} />
-              <Text style={styles.text}>Login with Google</Text>
-            </TouchableOpacity> */}
+       
+            
 
             <Text style={styles.registerHere}>
               Don’t have any account?{' '}

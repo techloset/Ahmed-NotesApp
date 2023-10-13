@@ -22,16 +22,16 @@ const BuyingSomeThing = () => {
   const [checkedItems, setCheckedItems] = useState([]);
 
   useEffect(() => {
-    // Fetch items from your API when the component mounts
+  
     fetchItems();
   }, []);
 
   const fetchItems = async () => {
     try {
-      setLoading(true); // Set loading to true when starting the API call
+      setLoading(true); 
       const response = await fetch(
-        'http://192.168.50.64:3000/api/items/getItems',
-      ); // Replace with your API URL
+        'https://notesapp-backend-omega.vercel.app/api/items/getItems',
+      ); 
       if (response.ok) {
         const data = await response.json();
         setCheckboxList(data.items);
@@ -41,7 +41,7 @@ const BuyingSomeThing = () => {
     } catch (error) {
       console.error('Error fetching items', error);
     } finally {
-      setLoading(false); // Set loading to false when the API call is complete
+      setLoading(false); 
     }
   };
 
@@ -53,9 +53,9 @@ const BuyingSomeThing = () => {
       const newItem = {id: Date.now(), label: newCheckboxLabel, checked: false};
 
       try {
-        setLoading(true); // Set loading to true when starting the API call
+        setLoading(true); 
         const response = await fetch(
-          'http://192.168.50.64:3000/api/items/buyItemList',
+          'https://notesapp-backend-omega.vercel.app/api/items/buyItemList',
           {
             method: 'POST',
             headers: {
@@ -81,7 +81,7 @@ const BuyingSomeThing = () => {
       } catch (error) {
         console.error('Error adding checkbox item', error);
       } finally {
-        setLoading(false); // Set loading to false when the API call is complete
+        setLoading(false); 
       }
     }
   };
@@ -93,9 +93,9 @@ const BuyingSomeThing = () => {
   const handleDeleteCheckbox = async id => {
     console.log('idddddd', id);
     try {
-      setLoading(true); // Set loading to true when starting the API call
+      setLoading(true); 
       const response = await fetch(
-        'http://192.168.50.64:3000/api/items/deleteItem',
+        'https://notesapp-backend-omega.vercel.app/api/items/deleteItem',
         {
           method: 'DELETE',
           headers: {
@@ -113,7 +113,7 @@ const BuyingSomeThing = () => {
     } catch (error) {
       console.error('Error deleting checkbox item', error);
     } finally {
-      setLoading(false); // Set loading to false when the API call is complete
+      setLoading(false); 
     }
   };
 
@@ -122,7 +122,7 @@ const BuyingSomeThing = () => {
 
 
   const handleCheckboxChange = async (id, checked,label) => {
-    // Update the state of all checkboxes when one is clicked
+   
     console.log("lable=====",label);
     const updatedList = checkboxList.map(item =>
       item.id === id ? {...item, checked} : item,
@@ -134,9 +134,9 @@ const BuyingSomeThing = () => {
       setCheckedItems(checkedItems.filter(item => item !== id));
     }
     try {
-      setLoading(true); // Set loading to true when starting the API call
+      setLoading(true); 
       const response = await fetch(
-        'http://192.168.50.64:3000/api/items/updatelist',
+        'https://notesapp-backend-omega.vercel.app/api/items/updatelist',
         {
           method: 'PUT',
           headers: {
@@ -154,7 +154,7 @@ const BuyingSomeThing = () => {
     } catch (error) {
       console.error('Error updating checkbox item', error);
     } finally {
-      setLoading(false); // Set loading to false when the API call is complete
+      setLoading(false);
     }
   };
 
@@ -226,7 +226,7 @@ const BuyingSomeThing = () => {
             </View>
           )}
 
-          {/* Rest of your component */}
+      
         </View>
       </ScrollView>
       <BottomMenuBar />

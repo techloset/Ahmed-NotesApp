@@ -52,13 +52,15 @@ const EmailCode = () => {
   const {verifyCode} = useContext(ContextAuth)
   verifyCode(code)
 
+  
+
   const submitcode =async () => {
     setLoading(true)
     try {
       
       await validationSchema.validate({ code1, code2, code3, code4 }, { abortEarly: false });
       const code = code1+code2+code3+code4
-      const responce = await fetch('http://192.168.50.64:3000/api/user/verifycode', {
+      const responce = await fetch('https://notesapp-backend-omega.vercel.app/api/user/verifycode', {
          method: 'POST',
          headers: {'content-type' : 'application/json'},
          body: JSON.stringify({

@@ -51,7 +51,7 @@ const CreateNewPassword = () => {
       );
 
       const responce = await fetch(
-        'http://192.168.50.64:3000/api/user/createnewPassword',
+        'https://notesapp-backend-omega.vercel.app/api/user/createnewPassword',
         {
           method: 'POST',
           headers: {
