@@ -31,7 +31,6 @@ import {
   pixelSizeVertical,
   widthPixel,
 } from '../constants/responsive';
-import Toast from 'react-native-toast-message';
 
 const Settings = () => {
   const [isEnabled, setIsEnabled] = useState(false);
@@ -84,7 +83,6 @@ const Settings = () => {
   const getGoogleUser = async () => {
     try {
       let googleData = await AsyncStorage.getItem('GoogleUserData');
-      console.log('gogoogogoogg', googleData);
       setuserInfog(JSON.parse(googleData));
       setIsLoading(false);
     } catch (error) {
@@ -193,7 +191,7 @@ const Settings = () => {
               </View>
 
               <View style={{marginTop: 10}}>
-                {userInfog && userData ? (
+                {userInfog || userData ? (
                   <Text style={styles.name}> {userInfog.name}</Text>
                 ) : (
                   <Text style={styles.name}> {userData.name}</Text>
@@ -206,7 +204,7 @@ const Settings = () => {
                     style={{marginTop: 3}}
                   />
                   <Text style={{fontSize: 12, color: '#827D89'}}>
-                    {userInfog && userData ? (
+                    {userInfog || userData ? (
                       <Text> {userInfog.email}</Text>
                     ) : (
                       <Text> {userData.email}</Text>

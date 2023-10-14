@@ -15,6 +15,7 @@ import IconM from 'react-native-vector-icons/MaterialCommunityIcons';
 import IconMa from 'react-native-vector-icons/MaterialIcons';
 import {useNavigation} from '@react-navigation/native';
 import Modal from 'react-native-modal';
+import Model from "../assects/images/model.svg"
 
 
 
@@ -261,7 +262,7 @@ function openLanguageSettings() {
             </View>
           </View>
           <View style={styles.images}>
-            <Image source={require('../assects/images/modelimage.png')} />
+            <Model/>
           </View>
           <Text style={styles.pinned}>Notes Pinned Successfully</Text>
 

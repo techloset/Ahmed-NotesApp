@@ -10,6 +10,7 @@ import {
   pixelSizeHorizontal,
   widthPixel,
 } from '../constants/responsive';
+import Onboard from "../assects/images/onboarding.svg"
 
 const OnboardingScreen = () => {
   const GoLogin = () => {
@@ -27,10 +28,8 @@ const OnboardingScreen = () => {
         backgroundColor="#6A3EA1"
       />
       <View style={styles.container}>
-        <Image
-          style={styles.image}
-          source={require('../assects/images/loginpic.png')}
-        />
+      <Onboard style={styles.image}/>
+       
         <Text style={styles.para}>
           Jot Down anything you want to achieve, today or in the future
         </Text>

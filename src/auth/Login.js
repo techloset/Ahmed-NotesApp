@@ -26,6 +26,8 @@ import {
   pixelSizeVertical,
   widthPixel,
 } from '../constants/responsive';
+import Googleg from "../assects/images/google.svg"
+import Facebook from "../assects/images/facebook.svg"
 
 const Login = () => {
   // const {login} = useContext(AuthContext)
@@ -264,12 +266,12 @@ const Login = () => {
               <TouchableOpacity
                 onPress={() => signInGoogle()}
                 style={styles.iconParent}>
-                <Image source={require('../assects/images/google.png')} />
+                  <Googleg/>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => onFacebookButtonPress()}
                 style={styles.iconParent}>
-                <Image source={require('../assects/images/facebook.png')} />
+                  <Facebook/>
               </TouchableOpacity>
 
             </View>
