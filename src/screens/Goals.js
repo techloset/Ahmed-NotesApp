@@ -27,17 +27,16 @@ const BuyingSomeThing = () => {
   const [loading, setLoading] = useState(false);
   const [checkedItems, setCheckedItems] = useState([]);
 
-  useEffect(() => {
-  
-    fetchItems();
-  }, []);
+ 
 
   const fetchItems = async () => {
     try {
       setLoading(true); 
       const response = await fetch(
-        'https://notesapp-backend-omega.vercel.app/api/goalsItem/getGoals',
-      );
+        'https://notesapp-backend-omega.vercel.app/api/goalsItem/getGoals',{
+          method:"GET",
+          headers:{"Content-Type":"application/json"},
+        });
       if (response.ok) {
         const data = await response.json();
         setCheckboxList(data.items);
@@ -50,6 +49,13 @@ const BuyingSomeThing = () => {
       setLoading(false); 
     }
   };
+
+
+  useEffect(() => {
+  
+    fetchItems();
+  }, []);
+
 
   const handleAddCheckbox = async () => {
     if (newCheckboxLabel.trim() !== '') {
@@ -89,6 +95,8 @@ const BuyingSomeThing = () => {
     }
   };
 
+
+
   const handleDeleteCheckbox = async id => {
     console.log('idddddd', id);
     try {
@@ -115,6 +123,9 @@ const BuyingSomeThing = () => {
       setLoading(false); 
     }
   };
+
+
+
 
   const handleCheckboxChange = async (id, checked, label) => {
     console.log('lable=====', label);
@@ -151,6 +162,8 @@ const BuyingSomeThing = () => {
       setLoading(false); 
     }
   };
+
+  
 
   const handleInputKeyPress = event => {
     if (event.key === 'Enter') {

@@ -191,7 +191,7 @@ const Settings = () => {
               </View>
 
               <View style={{marginTop: 10}}>
-                {userInfog && userData ? (
+                {userInfog  ? (
                   <Text style={styles.name}> {userInfog.name}</Text>
                 ) : (
                   <Text style={styles.name}> {userData.name}</Text>
@@ -204,7 +204,7 @@ const Settings = () => {
                     style={{marginTop: 3}}
                   />
                   <Text style={{fontSize: 12, color: '#827D89'}}>
-                    {userInfog && userData ? (
+                    {userInfog? (
                       <Text> {userInfog.email}</Text>
                     ) : (
                       <Text> {userData.email}</Text>

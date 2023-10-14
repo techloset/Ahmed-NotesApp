@@ -30,8 +30,7 @@ const BuyingSomeThing = () => {
     try {
       setLoading(true); 
       const response = await fetch(
-        'https://notesapp-backend-omega.vercel.app/api/items/getItems',
-      ); 
+        'https://notesapp-backend-omega.vercel.app/api/items/getItems', ); 
       if (response.ok) {
         const data = await response.json();
         setCheckboxList(data.items);
