@@ -12,11 +12,13 @@ import {
   pixelSizeVertical,
   widthPixel,
 } from '../constants/responsive';
+import Finish from "../assects/images/finished"
+
+
 const FinishedScreen = () => {
   const [loading, setLoading] = useState(false);
   const [items, setItems] = useState([]);
   const [goals, setGoals] = useState([]);
-
 
 
 
@@ -93,10 +95,7 @@ const FinishedScreen = () => {
               </Text>
             </View>
             <View>
-              <Image
-                style={{ marginBottom: -20 }}
-                source={require('../assects/images/finishHeader.png')}
-              />
+              <Finish style={{ marginBottom: -20 }}/>
             </View>
           </View>
         </View>
