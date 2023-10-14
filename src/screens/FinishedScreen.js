@@ -105,7 +105,7 @@ const FinishedScreen = () => {
             <View style={styles.card1}>
               <Text style={styles.titlecard}>💡 New Product Idea Design</Text>
               <Text style={styles.para}>
-                Create a mobile app UI Kit that provide a basic notes
+                Create a mobile app UI Kit that provide a basic note
                 functionality but with some improvement.
               </Text>
               <Text style={styles.para}>
