@@ -37,7 +37,7 @@ const BuyingSomeThing = () => {
         headers:{"Content-Type":"application/json"},  
       });
       if (response.ok) {
-        console.log("''''''''''''");
+        console.log("'''''test'''''''", response);
         const data = await response.json();
         console.log("7888888888",data);
         setCheckboxList(data.items);

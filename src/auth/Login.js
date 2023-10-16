@@ -68,13 +68,11 @@ const Login = () => {
 
       handleSubmit();
     } catch (errors) {
-      Toast.error("Something Went Wrong");
       const errorMessages = {};
       errors.inner.forEach(error => {
         errorMessages[error.path] = error.message;
       });
       setFieldErrors(errorMessages);
-      Toast.error("Something Went Wrong");
     }
   };
 
@@ -89,12 +87,16 @@ const Login = () => {
         body: JSON.stringify({
           email: formData.email,
           password: formData.password,
-        }),
+        }),usersData
       });
+      const usersData = await response.json();
+
+      if(response.ok == false){
+        Toast.error(usersData.message)
+      }
 
       if (response.ok) {
         setloading(false);
-        const usersData = await response.json();
         const userAuthData = usersData.existingUserByEmail;
         const token = usersData.token;
         Toast.success("Login Successfully");
@@ -105,13 +107,11 @@ const Login = () => {
           console.log('userAuthData Saved==', userAuthData);
         } catch (error) {
           console.log(error);
-          Toast.error("Something Went Wrong");
         }
         navigation.navigate('HomeScreen');
       }
     } catch (error) {
       console.log('errorrr', error);
-      Toast.error("Something Went Wrong");
       setloading(false);
     } finally {
       setloading(false);
