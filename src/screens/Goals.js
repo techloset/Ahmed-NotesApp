@@ -32,17 +32,16 @@ const BuyingSomeThing = () => {
   const fetchItems = async () => {
     try {
       setLoading(true); 
-      const response = await fetch(
-        'https://notesapp-backend-omega.vercel.app/api/goalsItem/getGoals',{
-          method:"GET",
-          headers:{"Content-Type":"application/json"},
-        });
+      const response = await fetch('https://notesapp-backend-omega.vercel.app/api/goalsItem/getGoals',{
+        method:"GET",
+        headers:{"Content-Type":"application/json"},  
+      });
       if (response.ok) {
+        console.log("''''''''''''");
         const data = await response.json();
+        console.log("7888888888",data);
         setCheckboxList(data.items);
-      } else {
-        console.error('Error fetching items');
-      }
+      } 
     } catch (error) {
       console.error('Error fetching items', error);
     } finally {
@@ -52,7 +51,7 @@ const BuyingSomeThing = () => {
 
 
   useEffect(() => {
-  
+  console.log("use effectttt===========");
     fetchItems();
   }, []);
 
@@ -153,8 +152,6 @@ const BuyingSomeThing = () => {
 
       if (response.ok) {
         console.log(`Checkbox with ID ${id} is now ${checked ? true : false}`);
-      } else {
-        console.error('Error updating checkbox item');
       }
     } catch (error) {
       console.error('Error updating checkbox item', error);
