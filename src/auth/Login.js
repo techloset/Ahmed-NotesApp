@@ -100,6 +100,7 @@ const Login = () => {
         const userAuthData = usersData.existingUserByEmail;
         const token = usersData.token;
         Toast.success("Login Successfully");
+        navigation.navigate('HomeScreen');
 
         try {
           await AsyncStorage.setItem('Token', token);
@@ -108,7 +109,6 @@ const Login = () => {
         } catch (error) {
           console.log(error);
         }
-        navigation.navigate('HomeScreen');
       }
     } catch (error) {
       console.log('errorrr', error);

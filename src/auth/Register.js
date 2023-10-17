@@ -41,7 +41,6 @@ const Register = () => {
     confirmPassword: '',
   });
   const [showPassword, setShowPassword] = useState(false);
-  // const [userData, setUserData] =  useState(null)
 
   const handleInputChange = (fieldName, text) => {
     setFormData({...formData, [fieldName]: text});
