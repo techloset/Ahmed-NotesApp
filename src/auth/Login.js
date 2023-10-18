@@ -26,12 +26,10 @@ import {
   pixelSizeVertical,
   widthPixel,
 } from '../constants/responsive';
-import Googleg from "../assects/images/google.svg"
-import Facebook from "../assects/images/facebook.svg"
+import Googleg from '../assects/images/google.svg';
+import Facebook from '../assects/images/facebook.svg';
 
 const Login = () => {
-  // const {login} = useContext(AuthContext)
-
   const [loading, setloading] = useState(false);
   const [userData, setUserData] = useState(null);
 
@@ -79,33 +77,39 @@ const Login = () => {
   const handleSubmit = async () => {
     try {
       setloading(true);
-      const response = await fetch('https://notesapp-backend-omega.vercel.app/api/user/signin', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        'https://notesapp-backend-omega.vercel.app/api/user/signin',
+        {
+          cache: 'no-store',
         },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-        }),usersData
-      });
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.password,
+          }),
+          usersData,
+        },
+      );
       const usersData = await response.json();
 
-      if(response.ok == false){
-        Toast.error(usersData.message)
+      if (response.ok == false) {
+        Toast.error(usersData.message);
       }
 
       if (response.ok) {
         setloading(false);
         const userAuthData = usersData.existingUserByEmail;
         const token = usersData.token;
-        Toast.success("Login Successfully");
+        Toast.success('Login Successfully');
         navigation.navigate('HomeScreen');
 
         try {
           await AsyncStorage.setItem('Token', token);
           await AsyncStorage.setItem('UserData', JSON.stringify(userAuthData));
-          console.log('userAuthData Saved==', userAuthData);
         } catch (error) {
           console.log(error);
         }
@@ -118,35 +122,26 @@ const Login = () => {
     }
   };
 
- 
   const LoginBTN = () => {
     navigation.navigate('Register');
   };
 
   const signInGoogle = async () => {
-    console.log('Login Start');
     try {
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
-      console.log('userinfo.user-==========', userInfo.user);
       const googlid = await AsyncStorage.setItem('GoogleId', userInfo.user.id);
       const googleUserData = await AsyncStorage.setItem(
         'GoogleUserData',
         JSON.stringify(userInfo.user),
       );
-      console.log('idsaved==');
-      console.log('googleUserData Saved==');
       setGoogleLogin(userInfo);
       navigation.navigate('HomeScreen');
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-        console.log('user cancelled the login flow');
       } else if (error.code === statusCodes.IN_PROGRESS) {
-        console.log('operation (e.g. sign in) is in progress already');
       } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-        console.log('play services not available or outdated');
       } else {
-        console.log('some other error happened', error);
       }
     }
   };
@@ -171,7 +166,6 @@ const Login = () => {
       'public_profile',
       'email',
     ]);
-    console.log('User Login with Facebooks', result);
     navigation.navigate('Settings');
 
     if (result.isCancelled) {
@@ -266,18 +260,14 @@ const Login = () => {
               <TouchableOpacity
                 onPress={() => signInGoogle()}
                 style={styles.iconParent}>
-                  <Googleg/>
+                <Googleg />
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => onFacebookButtonPress()}
                 style={styles.iconParent}>
-                  <Facebook/>
+                <Facebook />
               </TouchableOpacity>
-
             </View>
-
-       
-            
 
             <Text style={styles.registerHere}>
               Don’t have any account?{' '}

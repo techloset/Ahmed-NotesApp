@@ -19,7 +19,7 @@ const FinishedScreen = () => {
   const [loading, setLoading] = useState(false);
   const [items, setItems] = useState([]);
   const [goals, setGoals] = useState([]);
-
+  const [goalssub, setGoalssub] = useState([]);
 
 
   useFocusEffect(
@@ -28,7 +28,9 @@ const FinishedScreen = () => {
         try {
           setLoading(true);
           const response = await fetch(
-            'https://notesapp-backend-omega.vercel.app/api/items/finisheditems',
+            'https://notesapp-backend-omega.vercel.app/api/items/finisheditems',{
+              cache: 'no-store'
+            },
             {
               method: 'GET',
               headers: {
@@ -59,6 +61,9 @@ const FinishedScreen = () => {
           const response = await fetch(
             'https://notesapp-backend-omega.vercel.app/api/goalsItem/finishGoals',
             {
+              cache: 'no-store'
+            },
+            {
               method: 'GET',
               headers: {
                 'Content-Type': 'application/json',
@@ -66,7 +71,8 @@ const FinishedScreen = () => {
             },
           );
           const data = await response.json();
-          setGoals(data.checkedItems);
+          setGoals(data.checkedMain);
+          setGoalssub(data.checkedsub);
           setLoading(false);
         } catch (error) {
           setLoading(false);
@@ -91,7 +97,7 @@ const FinishedScreen = () => {
             <View style={styles.header}>
               <Text style={styles.journey}>Amazing Journey!</Text>
               <Text style={styles.textheader}>
-                You have successfully finished {items.length + goals.length} notes
+                You have successfully finished {items.length} notes
               </Text>
             </View>
             <View>
@@ -195,49 +201,39 @@ const FinishedScreen = () => {
           </View>
 
           <View style={[styles.body, styles.news]}>
-            <View style={styles.parentcARDINSODE}>
-              <View style={[styles.card1, styles.listCard, styles.listCard2]}>
-                <Text style={styles.titlecard}> 🥅 Monthly Goals List</Text>
-
-                <View style={{ marginLeft: 10 }}>
-                  {loading ? (
-                    <Text
-                      style={{
-                        color: 'black',
-                        fontSize: 14,
-                        textAlign: 'center',
-                      }}>
-                      Loading...
-                    </Text>
-                  ) : (
-                    <>
-                      {goals.map((item, i) => {
-                        return (
-                          <View key={i} style={styles.checkBoxParent}>
-                            <CheckBox
-                              style={{ marginTop: -3 }}
-                              tintColors={{ true: '#6A3EA1', false: 'gray' }}
-                              checked={true}
-                              disabled={false}
-                              value={true}
-                            />
-                            <Text style={styles.text}>&nbsp; {item.label}</Text>
-                          </View>
-                        );
-                      })}
-                    </>
-                  )}
-                </View>
-
-                <View style={[styles.cardFooter, styles.listCardFooter2]}>
-                  <Text style={{ color: 'black', fontSize: 10 }}>
-                    Interesting Idea
-                  </Text>
-                </View>
-              </View>
+    <View style={styles.parentcARDINSODE}>
+      {goals.map((mainGoal, i) => (
+        <View key={i}>
+          <View style={[styles.card1, styles.listCard, styles.listCard2]}>
+            <Text style={styles.titlecard}>{mainGoal.label}</Text>
+            <View style={{ marginLeft: 10 }}>
+              {goalssub.map((subGoal, j) => {
+                if (subGoal.mainTaskid === mainGoal.id) {
+                  return (
+                    <View key={j} style={styles.checkBoxParent}>
+                      <CheckBox
+                        style={{ marginTop: -3 }}
+                        tintColors={{ true: '#6A3EA1', false: 'gray' }}
+                        checked={true}
+                        disabled={false}
+                        value={true}
+                      />
+                      <Text style={styles.text}>&nbsp; {subGoal.label}</Text>
+                    </View>
+                  );
+                }
+                return null;
+              })}
             </View>
-            <View></View>
+            <View style={[styles.cardFooter, styles.listCardFooter2]}>
+              <Text style={{ color: 'black', fontSize: 10 }}>Interesting Idea</Text>
+            </View>
           </View>
+        </View>
+      ))}
+    </View>
+    <View></View>
+  </View>
         </View>
       </ScrollView>
     </GestureHandlerRootView>

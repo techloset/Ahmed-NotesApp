@@ -42,7 +42,9 @@ const ForgotPassword = () => {
     try {
       await validateEmail.validate(email, {abortEarly: false});
 
-     const response = await fetch('https://notesapp-backend-omega.vercel.app/api/user/forgotPassword', {
+     const response = await fetch('https://notesapp-backend-omega.vercel.app/api/user/forgotPassword',{
+      cache: 'no-store'
+    }, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

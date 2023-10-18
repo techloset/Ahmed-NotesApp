@@ -12,7 +12,13 @@ import HeaderBack from '../components/HeaderBack';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import CheckBox from '@react-native-community/checkbox';
 import BottomMenuBar from '../navigation/BottomMenuBar';
-import { fontPixel, heightPixel, pixelSizeHorizontal, pixelSizeVertical, widthPixel } from '../constants/responsive';
+import {
+  fontPixel,
+  heightPixel,
+  pixelSizeHorizontal,
+  pixelSizeVertical,
+  widthPixel,
+} from '../constants/responsive';
 
 const BuyingSomeThing = () => {
   const [newCheckboxLabel, setNewCheckboxLabel] = useState('');
@@ -22,15 +28,27 @@ const BuyingSomeThing = () => {
   const [checkedItems, setCheckedItems] = useState([]);
 
   useEffect(() => {
-  
     fetchItems();
   }, []);
 
   const fetchItems = async () => {
     try {
-      setLoading(true); 
+      setLoading(true);
       const response = await fetch(
-        'https://notesapp-backend-omega.vercel.app/api/items/getItems', ); 
+        'https://notesapp-backend-omega.vercel.app/api/items/getItems',
+        {
+          cache: 'no-store',
+        },
+        {
+          cache: 'no-store',
+        },
+        {
+          method: 'GET',
+        },
+        {
+          cache: 'no-store',
+        },
+      );
       if (response.ok) {
         const data = await response.json();
         setCheckboxList(data.items);
@@ -40,21 +58,21 @@ const BuyingSomeThing = () => {
     } catch (error) {
       console.error('Error fetching items', error);
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   };
-
-
-
 
   const handleAddCheckbox = async () => {
     if (newCheckboxLabel.trim() !== '') {
       const newItem = {id: Date.now(), label: newCheckboxLabel, checked: false};
 
       try {
-        setLoading(true); 
+        setLoading(true);
         const response = await fetch(
           'https://notesapp-backend-omega.vercel.app/api/items/buyItemList',
+          {
+            cache: 'no-store',
+          },
           {
             method: 'POST',
             headers: {
@@ -70,7 +88,6 @@ const BuyingSomeThing = () => {
 
         if (response.ok) {
           const responseData = await response.json();
-          console.log('New Checkbox Item:', responseData.item);
 
           setCheckboxList([...checkboxList, responseData.item]);
           setNewCheckboxLabel('');
@@ -80,19 +97,14 @@ const BuyingSomeThing = () => {
       } catch (error) {
         console.error('Error adding checkbox item', error);
       } finally {
-        setLoading(false); 
+        setLoading(false);
       }
     }
   };
 
-
-
-
-
   const handleDeleteCheckbox = async id => {
-    console.log('idddddd', id);
     try {
-      setLoading(true); 
+      setLoading(true);
       const response = await fetch(
         'https://notesapp-backend-omega.vercel.app/api/items/deleteItem',
         {
@@ -112,17 +124,11 @@ const BuyingSomeThing = () => {
     } catch (error) {
       console.error('Error deleting checkbox item', error);
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   };
 
-
-
-
-
-  const handleCheckboxChange = async (id, checked,label) => {
-   
-    console.log("lable=====",label);
+  const handleCheckboxChange = async (id, checked, label) => {
     const updatedList = checkboxList.map(item =>
       item.id === id ? {...item, checked} : item,
     );
@@ -133,7 +139,7 @@ const BuyingSomeThing = () => {
       setCheckedItems(checkedItems.filter(item => item !== id));
     }
     try {
-      setLoading(true); 
+      setLoading(true);
       const response = await fetch(
         'https://notesapp-backend-omega.vercel.app/api/items/updatelist',
         {
@@ -224,8 +230,6 @@ const BuyingSomeThing = () => {
               )}
             </View>
           )}
-
-      
         </View>
       </ScrollView>
       <BottomMenuBar />

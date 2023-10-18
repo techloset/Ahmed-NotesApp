@@ -6,27 +6,39 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
-import React, { useContext, useRef, useState } from 'react';
+import React, {useContext, useRef, useState} from 'react';
 import HeaderBack from '../components/HeaderBack';
 import {useNavigation} from '@react-navigation/native';
-import { ContextAuth } from './AuthContext';
-import * as Yup from "yup"
-import { fontPixel, heightPixel, pixelSizeHorizontal, pixelSizeVertical, widthPixel } from '../constants/responsive';
-
-
+import {ContextAuth} from './AuthContext';
+import * as Yup from 'yup';
+import {
+  fontPixel,
+  heightPixel,
+  pixelSizeHorizontal,
+  pixelSizeVertical,
+  widthPixel,
+} from '../constants/responsive';
 
 const EmailCode = () => {
   const navigation = useNavigation();
   const [validationErrors, setValidationErrors] = useState({});
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   const validationSchema = Yup.object().shape({
-    code1: Yup.string().required('fields are required').length(1, 'All fields are required'),
-    code2: Yup.string().required('Code 2 is required').length(1, 'Code 2 must be a single character'),
-    code3: Yup.string().required('Code 3 is required').length(1, 'Code 3 must be a single character'),
-    code4: Yup.string().required('Code 4 is required').length(1, 'Code 4 must be a single character'),
-  })
-  
+    code1: Yup.string()
+      .required('fields are required')
+      .length(1, 'All fields are required'),
+    code2: Yup.string()
+      .required('Code 2 is required')
+      .length(1, 'Code 2 must be a single character'),
+    code3: Yup.string()
+      .required('Code 3 is required')
+      .length(1, 'Code 3 must be a single character'),
+    code4: Yup.string()
+      .required('Code 4 is required')
+      .length(1, 'Code 4 must be a single character'),
+  });
+
   const code1Ref = useRef();
   const code2Ref = useRef();
   const code3Ref = useRef();
@@ -43,51 +55,53 @@ const EmailCode = () => {
     }
   };
 
-  const handleFocus = ()=>{
-    setValidationErrors('')
-  }
+  const handleFocus = () => {
+    setValidationErrors('');
+  };
 
-  
-  const code = code1+code2+code3+code4
-  const {verifyCode} = useContext(ContextAuth)
-  verifyCode(code)
+  const code = code1 + code2 + code3 + code4;
+  const {verifyCode} = useContext(ContextAuth);
+  verifyCode(code);
 
-  
-
-  const submitcode =async () => {
-    setLoading(true)
+  const submitcode = async () => {
+    setLoading(true);
     try {
-      
-      await validationSchema.validate({ code1, code2, code3, code4 }, { abortEarly: false });
-      const code = code1+code2+code3+code4
-      const responce = await fetch('https://notesapp-backend-omega.vercel.app/api/user/verifycode', {
-         method: 'POST',
-         headers: {'content-type' : 'application/json'},
-         body: JSON.stringify({
-            verifyCode: code
-         })
-      })
-      
-  if(responce.ok){
-    setLoading(false)
-    const res = await responce.json()
-    console.log("code====", code);
-    console.log("responce====", res);
-    navigation.navigate('CreateNewPassword');
-  }
+      await validationSchema.validate(
+        {code1, code2, code3, code4},
+        {abortEarly: false},
+      );
+      const code = code1 + code2 + code3 + code4;
+      const responce = await fetch(
+        'https://notesapp-backend-omega.vercel.app/api/user/verifycode',
+        {
+          cache: 'no-store',
+        },
+        {
+          method: 'POST',
+          headers: {'content-type': 'application/json'},
+
+          body: JSON.stringify({
+            verifyCode: code,
+          }),
+        },
+      );
+
+      if (responce.ok) {
+        setLoading(false);
+        const res = await responce.json();
+
+        navigation.navigate('CreateNewPassword');
+      }
     } catch (error) {
-      setLoading(false)
+      setLoading(false);
       const errors = {};
-      error.inner.forEach((e) => {
+      error.inner.forEach(e => {
         errors[e.path] = e.message;
       });
       setValidationErrors(errors);
-    
-    }finally{
-      setLoading(false)
+    } finally {
+      setLoading(false);
     }
-
-
   };
 
   return (
@@ -109,12 +123,11 @@ const EmailCode = () => {
             placeholder="0"
             value={code1}
             maxLength={1}
-            onChangeText={(text) => {
+            onChangeText={text => {
               setCode1(text);
               handleCodeChange(text, code2Ref);
             }}
             onFocus={handleFocus}
-            
           />
           <TextInput
             ref={code2Ref}
@@ -122,7 +135,7 @@ const EmailCode = () => {
             placeholderTextColor="#180E25"
             placeholder="0"
             value={code2}
-            onChangeText={(text) => {
+            onChangeText={text => {
               setCode2(text);
               handleCodeChange(text, code3Ref);
             }}
@@ -130,12 +143,12 @@ const EmailCode = () => {
             onFocus={handleFocus}
           />
           <TextInput
-             ref={code3Ref}
+            ref={code3Ref}
             style={styles.codeInput}
             placeholderTextColor="#180E25"
             placeholder="0"
             value={code3}
-            onChangeText={(text) => {
+            onChangeText={text => {
               setCode3(text);
               handleCodeChange(text, code4Ref);
             }}
@@ -148,16 +161,24 @@ const EmailCode = () => {
             placeholderTextColor="#180E25"
             placeholder="0"
             value={code4}
-            onChangeText={(text) => setCode4(text)}
+            onChangeText={text => setCode4(text)}
             maxLength={1}
             onFocus={handleFocus}
           />
         </View>
-        {validationErrors.code1 && <Text style={{color: 'red', textAlign: 'center', marginTop: 10}}>{validationErrors.code1}</Text>}
+        {validationErrors.code1 && (
+          <Text style={{color: 'red', textAlign: 'center', marginTop: 10}}>
+            {validationErrors.code1}
+          </Text>
+        )}
         <View style={{marginTop: 100}}>
           <View>
-            <TouchableOpacity onPress={submitcode} style={[ styles.btn ,loading && styles.loadbtn]}>
-              <Text style={styles.text}>{loading?"Loading...":"Submit Code"}</Text>
+            <TouchableOpacity
+              onPress={submitcode}
+              style={[styles.btn, loading && styles.loadbtn]}>
+              <Text style={styles.text}>
+                {loading ? 'Loading...' : 'Submit Code'}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -229,7 +250,7 @@ const styles = StyleSheet.create({
   },
   codeInput: {
     width: widthPixel(50),
-    height:heightPixel(50),
+    height: heightPixel(50),
     borderWidth: 1,
     borderColor: 'gray',
     fontSize: fontPixel(20),
@@ -238,7 +259,7 @@ const styles = StyleSheet.create({
     marginRight: pixelSizeVertical(10),
     color: 'black',
   },
-  loadbtn:{
-    backgroundColor:"gray"
-  }
+  loadbtn: {
+    backgroundColor: 'gray',
+  },
 });

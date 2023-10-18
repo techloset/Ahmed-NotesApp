@@ -12,159 +12,256 @@ import HeaderBack from '../components/HeaderBack';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import CheckBox from '@react-native-community/checkbox';
 import BottomMenuBar from '../navigation/BottomMenuBar';
-import {
-  fontPixel,
-  heightPixel,
-  pixelSizeHorizontal,
-  pixelSizeVertical,
-  widthPixel,
-} from '../constants/responsive';
 
-const BuyingSomeThing = () => {
-  const [newCheckboxLabel, setNewCheckboxLabel] = useState('');
-  const [checkboxList, setCheckboxList] = useState([]);
-  const [showInput, setShowInput] = useState(false);
+const Goals = () => {
+  const [newMainTask, setNewMainTask] = useState('');
+  const [mainTaskList, setMainTaskList] = useState([]);
+  const [newSubTask, setNewSubTask] = useState('');
   const [loading, setLoading] = useState(false);
-  const [checkedItems, setCheckedItems] = useState([]);
+  const [subTaskInputs, setSubTaskInputs] = useState({});
 
- 
-
-  const fetchItems = async () => {
-    try {
-      setLoading(true); 
-      const response = await fetch('https://notesapp-backend-omega.vercel.app/api/goalsItem/getGoals',{
-        method:"GET",
-        headers:{"Content-Type":"application/json"},  
-      });
-      if (response.ok) {
-        console.log("'''''test'''''''", response);
-        const data = await response.json();
-        console.log("7888888888",data);
-        setCheckboxList(data.items);
-      } 
-    } catch (error) {
-      console.error('Error fetching items', error);
-    } finally {
-      setLoading(false); 
-    }
+  const updateSubTaskInput = (mainTaskId, value) => {
+    setSubTaskInputs({...subTaskInputs, [mainTaskId]: value});
   };
 
-
-  useEffect(() => {
-  console.log("use effectttt===========");
-    fetchItems();
-  }, []);
-
-
-  const handleAddCheckbox = async () => {
-    if (newCheckboxLabel.trim() !== '') {
-      const newItem = {id: Date.now(), label: newCheckboxLabel, checked: false};
-
+  const handleAddMainTask = async () => {
+    if (newMainTask.trim() !== '') {
       try {
         setLoading(true);
         const response = await fetch(
-          'https://notesapp-backend-omega.vercel.app/api/goalsItem/buyItemGolas',
+          'https://notesapp-backend-omega.vercel.app/api/maintasks',
           {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              iid: newItem.id,
-              checked: newItem.checked,
-              label: newItem.label,
+              label: newMainTask,
+              checked: false,
             }),
           },
         );
 
         if (response.ok) {
-          const responseData = await response.json();
-          console.log('New Checkbox Item:', responseData.item);
-
-          setCheckboxList([...checkboxList, responseData.item]);
-          setNewCheckboxLabel('');
-        } else {
-          console.error('Error adding checkbox item');
+          const newMainTaskItem = await response.json();
+          setMainTaskList([...mainTaskList, newMainTaskItem]);
+          setNewMainTask('');
         }
       } catch (error) {
-        console.error('Error adding checkbox item', error);
+        console.error('Error:', error);
       } finally {
-        setLoading(false); 
+        setLoading(false);
       }
     }
   };
 
+  const handleAddSubtask = async mainTaskId => {
+    if (subTaskInputs[mainTaskId] && subTaskInputs[mainTaskId].trim() !== '') {
+      try {
+        setLoading(true);
+        const response = await fetch(
+          `https://notesapp-backend-omega.vercel.app/api/subtasks`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              id: mainTaskId,
+              label: subTaskInputs[mainTaskId],
+              checked: false,
+            }),
+          },
+        );
 
+        if (response.ok) {
+          const newSubtaskItem = await response.json();
+          const updatedMainTaskList = mainTaskList.map(task =>
+            task.id === mainTaskId
+              ? {...task, subtasks: [...(task.subtasks || []), newSubtaskItem]}
+              : task,
+          );
+          setMainTaskList(updatedMainTaskList);
+          updateSubTaskInput(mainTaskId, '');
+        }
+      } catch (error) {
+        console.error('Errorrrrrrrrrrrrrrrrrrrrr:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
 
-  const handleDeleteCheckbox = async id => {
-    console.log('idddddd', id);
+  const fetchMainTasks = async () => {
     try {
       setLoading(true);
       const response = await fetch(
-        'https://notesapp-backend-omega.vercel.app/api/goalsItem/deleteGoals',
+        'https://notesapp-backend-omega.vercel.app/api/maintasks',
+        {
+          cache: 'no-store',
+        },
+      );
+      if (response.ok) {
+        const data = await response.json();
+        // Fetch subtasks for each main task
+        const mainTasksWithSubtasks = await Promise.all(
+          data.map(async mainTask => {
+            const subtaskResponse = await fetch(
+              `https://notesapp-backend-omega.vercel.app/api/subtasks?id=${mainTask.id}`,
+            );
+            if (subtaskResponse.ok) {
+              const subtasks = await subtaskResponse.json();
+              return {...mainTask, subtasks};
+            } else {
+              return mainTask;
+            }
+          }),
+        );
+
+        setMainTaskList(mainTasksWithSubtasks);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+  useEffect(() => {
+    fetchMainTasks();
+  }, []);
+
+  const handleDeleteMainTask = async mainTaskId => {
+    const updatedMainTaskList = mainTaskList.filter(
+      task => task.id !== mainTaskId,
+    );
+    setMainTaskList(updatedMainTaskList);
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `https://notesapp-backend-omega.vercel.app/api/maintasks`,
+        {
+          method: 'DELETE',
+          body: JSON.stringify({id: mainTaskId}),
+        },
+      );
+
+      if (response.ok) {
+        Toast.success('Item deleted');
+      } else {
+        console.log('Error');
+      }
+    } catch (error) {
+      console.error('Errossssssssssssssssr:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteSubtask = async subtaskId => {
+    // const updatedMainTaskList = mainTaskList.filter((task) => task.id !== subtaskId);
+    // setMainTaskList(updatedMainTaskList);
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `https://notesapp-backend-omega.vercel.app/api/subtasks`,
         {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({id: id}),
+          body: JSON.stringify({id: subtaskId}),
         },
       );
 
       if (response.ok) {
-        setCheckboxList(checkboxList.filter(item => item.id !== id));
+        setLoading(false);
+        // Remove the subtask from the state
+        Toast.success('Item deleted');
       } else {
-        console.error('Error deleting checkbox item');
+        console.error('Error deleting subtask');
       }
     } catch (error) {
-      console.error('Error deleting checkbox item', error);
+      console.error('Error:', error);
+      setLoading(false);
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   };
 
-
-
-
-  const handleCheckboxChange = async (id, checked, label) => {
-    console.log('lable=====', label);
-    const updatedList = checkboxList.map(item =>
-      item.id === id ? {...item, checked} : item,
-    );
-    setCheckboxList(updatedList);
-    if (checked) {
-      setCheckedItems([...checkedItems, id]);
-    } else {
-      setCheckedItems(checkedItems.filter(item => item !== id));
-    }
+  const handleCheckboxChangeMainTask = async (mainTaskId, newValue, label) => {
     try {
-      setLoading(true); 
+      setLoading(true);
+
+      // Update the state optimistically before making the API request
+      const updatedMainTaskList = mainTaskList.map(task =>
+        task.id === mainTaskId ? {...task, checked: newValue} : task,
+      );
+      setMainTaskList(updatedMainTaskList);
+
+      // Make the API request to update the checked status
       const response = await fetch(
-        'https://notesapp-backend-omega.vercel.app/api/goalsItem/updateGoals',
+        `https://notesapp-backend-omega.vercel.app/api/maintasks`,
         {
           method: 'PUT',
           headers: {
-            'Content-type': 'application/json',
+            'Content-Type': 'application/json',
           },
-          body: JSON.stringify({iid: id, checked: checked}),
+          body: JSON.stringify({
+            id: mainTaskId,
+            checked: newValue,
+          }),
         },
       );
 
-      if (response.ok) {
-        console.log(`Checkbox with ID ${id} is now ${checked ? true : false}`);
+      if (!response.ok) {
+        console.log('Error updating main task checked status');
       }
     } catch (error) {
-      console.error('Error updating checkbox item', error);
+      console.error('Error:', error);
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   };
 
-  
 
-  const handleInputKeyPress = event => {
-    if (event.key === 'Enter') {
-      handleAddCheckbox();
+
+  const handleCheckboxChangeSubtask = async (subtaskId, newValue) => {
+    try {
+      setLoading(true);
+  
+      // Update the state optimistically before making the API request
+      const updatedMainTaskList = mainTaskList.map((task) => {
+        if (task.subtasks) {
+          task.subtasks = task.subtasks.map((subtask) =>
+            subtask.id === subtaskId ? { ...subtask, checked: newValue } : subtask
+          );
+        }
+        return task;
+      });
+  
+      setMainTaskList(updatedMainTaskList);
+  
+      // Make the API request to update the checked status
+      const response = await fetch(`https://notesapp-backend-omega.vercel.app/api/subtasks`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: subtaskId,
+          checked: newValue,
+        }),
+      });
+  
+      if (!response.ok) {
+        console.log('Error updating subtask checked status');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -174,8 +271,8 @@ const BuyingSomeThing = () => {
       <View style={styles.line}></View>
       <ScrollView>
         <View style={styles.container}>
-          <View style={styles.buyDiv}>
-            <Text style={styles.buysome}>🛒 Monthly Goals</Text>
+          <View style={styles.taskDiv}>
+            <Text style={styles.taskHeader}>📋Goals</Text>
           </View>
 
           {loading ? (
@@ -186,77 +283,88 @@ const BuyingSomeThing = () => {
             />
           ) : (
             <View style={{marginTop: 20}}>
-              {checkboxList.map(item => (
-                <View style={styles.checkBoxParent} key={item.id}>
-                  <CheckBox
-                    style={{marginTop: 6}}
-                    tintColors={{true: '#6A3EA1', false: 'gray'}}
-                    value={item.checked}
-                    onValueChange={newValue => {
-                      handleCheckboxChange(item.id, newValue, item.label);
-                    }}
-                  />
-                  <Text style={styles.text}>&nbsp;{item.label}</Text>
-                  <TouchableOpacity
-                    onPress={() => handleDeleteCheckbox(item.id)}>
-                    <Icon name="delete" size={24} color="red" />
-                  </TouchableOpacity>
+              {/* Render Main Tasks */}
+              {mainTaskList.map((mainTask, i) => (
+                <View key={i}>
+                  <View style={styles.taskItem} key={mainTask.id}>
+                    <CheckBox
+                      style={styles.checkbox}
+                      tintColors={{true: '#6A3EA1', false: 'gray'}}
+                      value={mainTask.checked}
+                      onValueChange={newValue => {
+                        handleCheckboxChangeMainTask(
+                          mainTask.id,
+                          newValue,
+                          mainTask.label,
+                        );
+                      }}
+                    />
+                    <Text style={styles.taskLabel}>{mainTask.label}</Text>
+                    <TouchableOpacity
+                      onPress={() => handleDeleteMainTask(mainTask.id)}>
+                      <Icon name="delete" size={24} color="red" />
+                    </TouchableOpacity>
+                  </View>
+
+                  {/* Render Subtasks */}
+                  {mainTask.subtasks &&
+                    mainTask.subtasks.map((subtask, i) => (
+                      <View style={styles.subtaskItem} key={i}>
+                        <CheckBox
+                          style={styles.checkbox}
+                          tintColors={{true: '#6A3EA1', false: 'gray'}}
+                          value={subtask.checked}
+                          onValueChange={newValue => {
+                            handleCheckboxChangeSubtask(
+                              subtask.id,
+                              newValue,
+                              subtask.label,
+                            );
+                          }}
+                        />
+                        <Text style={styles.subtaskLabel}>{subtask.label}</Text>
+                        <TouchableOpacity
+                          onPress={() => handleDeleteSubtask(subtask.id)}>
+                          <Icon name="delete" size={24} color="red" />
+                        </TouchableOpacity>
+                      </View>
+                    ))}
+                  {/* Add Subtask */}
+                  <View style={styles.addSubTaskInput}>
+                    <TextInput
+                      style={styles.input}
+                      placeholder="Enter a new subtask"
+                      value={subTaskInputs[mainTask.id] || ''}
+                      onChangeText={text =>
+                        updateSubTaskInput(mainTask.id, text)
+                      }
+                    />
+                    <TouchableOpacity
+                      onPress={() => handleAddSubtask(mainTask.id)}>
+                      <View style={styles.addButton}>
+                        <Text style={styles.addButtonText}>+ Add Subtask</Text>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
                 </View>
               ))}
-              {showInput && (
-                <View style={styles.addCheckboxInput}>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Enter label for new checkbox"
-                    value={newCheckboxLabel}
-                    onChangeText={text => setNewCheckboxLabel(text)}
-                    onKeyPress={handleInputKeyPress}
-                    required={true}
-                  />
-                  <TouchableOpacity onPress={handleAddCheckbox}>
-                    <View style={styles.addCheckboxBtn}>
-                      <Text style={styles.addcheck}>+ Add Checkbox</Text>
-                    </View>
-                  </TouchableOpacity>
-                </View>
-              )}
-              {!showInput && (
-                <TouchableOpacity onPress={() => setShowInput(true)}>
-                  <View style={styles.addCheckboxBtn}>
-                    <Text style={styles.addcheck}>+ Add Checkbox</Text>
+
+              {/* Add Main Task */}
+              <View style={styles.addTaskInput}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter a new main task"
+                  value={newMainTask}
+                  onChangeText={text => setNewMainTask(text)}
+                />
+                <TouchableOpacity onPress={handleAddMainTask}>
+                  <View style={styles.addButton}>
+                    <Text style={styles.addButtonText}>+ Add Main Task</Text>
                   </View>
                 </TouchableOpacity>
-              )}
+              </View>
             </View>
           )}
-          <View style={styles.line}></View>
-          <View>
-            <Text style={styles.reminder}>
-              Reminder set on 15/07/2021, 18:30
-            </Text>
-          </View>
-          <View
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              gap: 10,
-              flexWrap: 'wrap',
-            }}>
-            <TouchableOpacity style={styles.btns}>
-              <Text style={styles.btntext}>Important</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.btns}>
-              <Text style={styles.btntext}>Top Priority</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.btns}>
-              <Text style={styles.btntext}>
-                Should Be Important in this week
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.btns}>
-              <Text style={styles.btntext}>Important</Text>
-            </TouchableOpacity>
-          </View>
         </View>
       </ScrollView>
       <BottomMenuBar />
@@ -264,7 +372,7 @@ const BuyingSomeThing = () => {
   );
 };
 
-export default BuyingSomeThing;
+export default Goals;
 
 const styles = StyleSheet.create({
   main: {
@@ -272,91 +380,105 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   line: {
-    width: widthPixel(100),
-    height: heightPixel(1),
+    width: '100%',
+    height: 1,
     backgroundColor: '#EFEEF0',
-    marginTop: pixelSizeHorizontal(30),
+    marginTop: 30,
   },
   container: {
     flex: 1,
     justifyContent: 'center',
-    padding: pixelSizeHorizontal(20),
+    padding: 20,
   },
-  buysome: {
+  taskDiv: {
+    marginTop: 20,
+  },
+  taskHeader: {
     color: 'black',
-    fontSize: fontPixel(32),
+    fontSize: 32,
     fontWeight: '700',
     lineHeight: 38.4,
-    marginTop: pixelSizeHorizontal(10),
   },
-  checkBoxParent: {
+  taskItem: {
     display: 'flex',
     flexDirection: 'row',
-    marginTop: pixelSizeHorizontal(10),
+    marginTop: 10,
     alignItems: 'center',
   },
-  text: {
-    fontSize: fontPixel(16),
+  subtaskItem: {
+    display: 'flex',
+    flexDirection: 'row',
+    marginLeft: 20,
+    marginTop: 5,
+    alignItems: 'center',
+  },
+  checkbox: {
+    marginTop: 6,
+  },
+  taskLabel: {
+    fontSize: 16,
     fontWeight: '500',
     color: '#180E25',
     lineHeight: 22.4,
-    marginTop: pixelSizeHorizontal(5),
+    marginTop: 5,
     flex: 1,
   },
-  addCheckboxInput: {
+  subtaskLabel: {
+    fontSize: 14,
+    fontWeight: '400',
+    color: '#180E25',
+    lineHeight: 19.6,
+    marginTop: 3,
+    flex: 1,
+  },
+  addTaskInput: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: pixelSizeHorizontal(20),
+    marginTop: 20,
+  },
+  addSubTaskInput: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 20,
+    marginTop: 5,
   },
   input: {
     flex: 1,
     borderWidth: 1,
     borderColor: '#6A3EA1',
     borderRadius: 5,
-    paddingVertical: pixelSizeVertical(2),
-    paddingHorizontal: pixelSizeHorizontal(12),
-    fontSize: fontPixel(12),
+    paddingVertical: 2,
+    paddingHorizontal: 12,
+    fontSize: 12,
     color: 'black',
   },
-  addCheckboxBtn: {
+  addButton: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: pixelSizeHorizontal(12),
-    paddingVertical: pixelSizeVertical(8),
+    paddingHorizontal: 12,
+    paddingVertical: 8,
     borderRadius: 5,
-    marginLeft: pixelSizeVertical(10),
+    marginLeft: 10,
+    // backgroundColor: '#6A3EA1',
   },
-  addcheck: {
+  addButtonText: {
     color: '#6A3EA1',
-    fontSize: fontPixel(16),
+    fontSize: 16,
     textDecorationLine: 'underline',
   },
   loadingIndicator: {
-    marginTop: pixelSizeHorizontal(20),
-  },
-  reminder: {
-    fontSize: fontPixel(12),
-    fontWeight: '400',
-    lineHeight: 14.52,
-    color: '#827D89',
-    marginTop: pixelSizeHorizontal(25),
-  },
-
-  btns: {
-    width: 'auto',
-    borderRadius: 100,
-    backgroundColor: '#EFEEF0',
-    marginTop: pixelSizeHorizontal(20),
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: pixelSizeHorizontal(8),
-  },
-  btntext: {
-    fontSize: fontPixel(12),
-    fontWeight: '400',
-    color: '#827D89',
+    marginTop: 20,
   },
 });
+
+
+
+
+
+
+
+
+

@@ -53,7 +53,11 @@ const CreateNewPassword = () => {
       const responce = await fetch(
         'https://notesapp-backend-omega.vercel.app/api/user/createnewPassword',
         {
+          cache: 'no-store',
+        },
+        {
           method: 'POST',
+
           headers: {
             'Content-Type': 'application/json',
           },
@@ -62,7 +66,6 @@ const CreateNewPassword = () => {
       );
       if (responce.ok) {
         setLoading(false);
-        console.log('Password is valid:', password);
         navigation.navigate('Login');
       }
     } catch (error) {

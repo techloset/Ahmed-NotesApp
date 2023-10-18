@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   StatusBar,
   StyleSheet,
@@ -8,49 +8,50 @@ import {
   TextInput,
   ActivityIndicator, // Import ActivityIndicator
 } from 'react-native';
-import { DeviceEventEmitter } from 'react-native'
-import { ScrollView } from 'react-native';
+import {DeviceEventEmitter} from 'react-native';
+import {ScrollView} from 'react-native';
 import HeaderBack from '../components/HeaderBack';
-import { Image } from 'react-native';
+import {Image} from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { launchImageLibrary } from 'react-native-image-picker';
-import { PermissionsAndroid } from 'react-native';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { fontPixel, heightPixel, pixelSizeHorizontal, pixelSizeVertical, widthPixel } from '../constants/responsive';
+import {launchImageLibrary} from 'react-native-image-picker';
+import {PermissionsAndroid} from 'react-native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {
+  fontPixel,
+  heightPixel,
+  pixelSizeHorizontal,
+  pixelSizeVertical,
+  widthPixel,
+} from '../constants/responsive';
 
 const EditProfile = () => {
   const [userData, setUserData] = useState(null);
   const [updatedname, setname] = useState('');
   const [updatedemail, setEmail] = useState('');
   const [profileImage, setProfileImage] = useState(null);
-  const [loading, setLoading] = useState(false); 
-  const [userInfog, setuserInfog] = useState()
-
-
-
+  const [loading, setLoading] = useState(false);
+  const [userInfog, setuserInfog] = useState();
 
   useEffect(() => {
     async function checkLoginStatus() {
       try {
         const storedData = await AsyncStorage.getItem('UserData');
-        let googleData =  await AsyncStorage.getItem('GoogleUserData')
+        let googleData = await AsyncStorage.getItem('GoogleUserData');
         const userData = JSON.parse(storedData);
-        const Datagoogle = JSON.parse(googleData)
-        console.log('Data==', userData);
-        console.log('googleData==', Datagoogle);
-        setuserInfog(Datagoogle)
+        const Datagoogle = JSON.parse(googleData);
+        setuserInfog(Datagoogle);
         setUserData(userData);
 
         if (userData && userData.name) {
           setname(userData.name);
-        }else if(Datagoogle && Datagoogle.name) {
+        } else if (Datagoogle && Datagoogle.name) {
           setname(Datagoogle.name);
         }
 
         if (userData && userData.email) {
           setEmail(userData.email);
-        }else if(Datagoogle && Datagoogle.email) {
+        } else if (Datagoogle && Datagoogle.email) {
           setname(Datagoogle.email);
         }
       } catch (error) {
@@ -61,40 +62,45 @@ const EditProfile = () => {
     checkLoginStatus();
   }, []);
 
-
-
-
-
-   const navigation = useNavigation()
-  const handleSaveChanges =async () => {
-    setLoading(true)
+  const navigation = useNavigation();
+  const handleSaveChanges = async () => {
+    setLoading(true);
     try {
-      
-      const response = await fetch('https://notesapp-backend-omega.vercel.app/api/user/editProfile',{
-        method:'POST',
-        headers:{
-          "Content-Type":"application/json",
+      const response = await fetch(
+        'https://notesapp-backend-omega.vercel.app/api/user/editProfile',
+        {
+          cache: 'no-store',
         },
-       body :JSON.stringify({name:updatedname , email:updatedemail, oldemail:userData.email })
-      })
-      if(response.ok){
-        setLoading(false)
-        console.log(updatedname, updatedemail);
-        const updatedUserData = { ...userData, name: updatedname, email: updatedemail};
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: updatedname,
+            email: updatedemail,
+            oldemail: userData.email,
+          }),
+        },
+      );
+      if (response.ok) {
+        setLoading(false);
+        const updatedUserData = {
+          ...userData,
+          name: updatedname,
+          email: updatedemail,
+        };
         await AsyncStorage.setItem('UserData', JSON.stringify(updatedUserData));
-        
-       
+
         setUserData(updatedUserData);
-        navigation.navigate('Login')
+        navigation.navigate('Login');
       }
     } catch (error) {
-      setLoading(false)
+      setLoading(false);
       console.log(error);
-    }finally{
-      setLoading(false)
+    } finally {
+      setLoading(false);
     }
-
-   
   };
 
   const requestGalleryPermission = async () => {
@@ -107,7 +113,7 @@ const EditProfile = () => {
           buttonNeutral: 'Ask Me Later',
           buttonNegative: 'Cancel',
           buttonPositive: 'OK',
-        }
+        },
       );
 
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
@@ -119,17 +125,15 @@ const EditProfile = () => {
       console.warn(err);
     }
   };
-  
-
 
   const pickImage = () => {
-    setLoading(true); 
+    setLoading(true);
     const options = {
       mediaType: 'photo',
       includeBase64: false,
     };
-    launchImageLibrary(options, async (response) => {
-      setLoading(false); 
+    launchImageLibrary(options, async response => {
+      setLoading(false);
       console.log(response);
       if (response.didCancel) {
         console.log('User cancelled image picker');
@@ -167,7 +171,7 @@ const EditProfile = () => {
           hidden={false}
           backgroundColor="white"
         />
-        <View style={{ display: 'flex', flexDirection: 'row', gap: 80 }}>
+        <View style={{display: 'flex', flexDirection: 'row', gap: 80}}>
           <HeaderBack title="Settings" />
           <Text style={styles.newNotes}>Edit Profile</Text>
         </View>
@@ -176,16 +180,16 @@ const EditProfile = () => {
 
         <View style={styles.Profilepic}>
           <View key={profileImage || 'defaultImage'}>
-          
-          <Image
+            <Image
               source={
-                googleLoggedInWithPicture ? { uri: userInfog.photo } : profileImage
-                  ? { uri: profileImage }
+                googleLoggedInWithPicture
+                  ? {uri: userInfog.photo}
+                  : profileImage
+                  ? {uri: profileImage}
                   : defaultProfileImage
               }
-              style={{ width: 120, height: 120, borderRadius: 100 }}
+              style={{width: 120, height: 120, borderRadius: 100}}
             />
-            
           </View>
         </View>
 
@@ -196,13 +200,15 @@ const EditProfile = () => {
             display: 'flex',
             alignItems: 'center',
           }}>
-          <TouchableOpacity style={styles.editBtn} onPress={requestGalleryPermission}>
-            <View style={{ display: 'flex', flexDirection: 'row' }}>
+          <TouchableOpacity
+            style={styles.editBtn}
+            onPress={requestGalleryPermission}>
+            <View style={{display: 'flex', flexDirection: 'row'}}>
               <Icon
                 name="edit"
                 size={16}
                 color={'#6A3EA1'}
-                style={{ marginEnd: 5, marginTop: 3 }}
+                style={{marginEnd: 5, marginTop: 3}}
               />
               <Text style={styles.textbtn}>Edit Profile</Text>
             </View>
@@ -222,7 +228,7 @@ const EditProfile = () => {
               onChangeText={setname}
             />
           </View>
-          <View style={{ marginTop: 20 }}>
+          <View style={{marginTop: 20}}>
             <Text style={styles.label}>Email Address</Text>
             <TextInput
               style={styles.input}
@@ -236,9 +242,11 @@ const EditProfile = () => {
               the app.
             </Text>
           </View>
-          <View style={{ marginTop: 30 }}>
+          <View style={{marginTop: 30}}>
             <TouchableOpacity style={styles.btn} onPress={handleSaveChanges}>
-              <Text style={styles.text}>{loading?"Loading...": "Save Changes"}</Text>
+              <Text style={styles.text}>
+                {loading ? 'Loading...' : 'Save Changes'}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -248,12 +256,6 @@ const EditProfile = () => {
 };
 
 export default EditProfile;
-
-
-
-
-
-
 
 const styles = StyleSheet.create({
   main: {

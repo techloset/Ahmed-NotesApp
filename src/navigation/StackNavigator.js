@@ -28,20 +28,16 @@ import LoadingScreen from '../screens/LoadingScreen';
 
 const StackNavigator = () => {
   const Stack = createNativeStackNavigator();
-  // console.log("usergooogoooo",userInfo.user.id);
   
   const [loading, setLoading] = useState(true);
   const [token, setToken] = useState('');
   const [googleid, setgoogleid] = useState('');
   
   useEffect(() => {
-    // Check if the user is already logged in (e.g., token exists in AsyncStorage)
     async function checkLoginStatus() {
       try {
         const storedToken = await AsyncStorage.getItem('Token');
         const googleId = await AsyncStorage.getItem('GoogleId');
-        console.log("token==", storedToken);
-        console.log("iddddd==", googleId);
         setToken(storedToken);
         setgoogleid(googleId)
       } catch (error) {
