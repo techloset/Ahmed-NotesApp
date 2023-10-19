@@ -10,15 +10,21 @@ import {
 import React from 'react';
 import BottomMenuBar from '../navigation/BottomMenuBar';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { useNavigation } from '@react-navigation/native';
-import { fontPixel, heightPixel, pixelSizeHorizontal, pixelSizeVertical, widthPixel } from '../constants/responsive';
+import {useNavigation} from '@react-navigation/native';
+import {
+  fontPixel,
+  heightPixel,
+  pixelSizeHorizontal,
+  pixelSizeVertical,
+  widthPixel,
+} from '../constants/responsive';
 
 const SearchBar = () => {
   const navigation = useNavigation();
 
   return (
     <View style={styles.main}>
-      <View style={{ display: 'flex', flexDirection: 'row' }}>
+      <View style={{display: 'flex', flexDirection: 'row'}}>
         <TouchableOpacity
           style={styles.headerparent}
           onPress={() => navigation.goBack()}>

@@ -42,6 +42,8 @@ const CreateNewPassword = () => {
     setPasswordError({...passwordError, [fieldName]: null});
   };
 
+
+
   const handleSubmit = async () => {
     setLoading(true);
     try {
@@ -79,6 +81,7 @@ const CreateNewPassword = () => {
       setLoading(false);
     }
   };
+  
 
   return (
     <ScrollView style={styles.main}>

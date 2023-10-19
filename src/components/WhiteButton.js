@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, View, TouchableOpacity } from 'react-native'
+import {  StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome5';
 const WhiteButton = (props) => {
   return (

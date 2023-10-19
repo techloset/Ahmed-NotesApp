@@ -20,7 +20,7 @@ import Modal from 'react-native-modal';
 import React, {useState, useContext, useEffect} from 'react';
 import IconA from 'react-native-vector-icons/AntDesign';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import AuthContext, {ContextAuth} from '../auth/AuthContext';
+import {ContextAuth} from '../auth/AuthContext';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useRoute} from '@react-navigation/native';
@@ -35,17 +35,15 @@ import {
 const Settings = () => {
   const [isEnabled, setIsEnabled] = useState(false);
   const [isEnabled2, setIsEnabled2] = useState(false);
-  
+
   const [isModalVisible, setModalVisible] = useState(false);
   const [isModalVisibleLogout, setModalVisibleLogout] = useState(false);
-  
+
   const [userData, setUserData] = useState('');
   const [profileImage, setProfileImage] = useState(null);
   const [userInfog, setuserInfog] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const route = useRoute();
-
-
 
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
   const toggleSwitch2 = () => setIsEnabled2(previousState => !previousState);
@@ -114,7 +112,6 @@ const Settings = () => {
 
   const signOut = async () => {
     try {
-
       await delToken();
       if (userInfog) {
         if (GoogleSignin.hasPlayServices()) {
@@ -144,21 +141,18 @@ const Settings = () => {
     }
   };
 
-
-  const GoChangePassword = () =>{
-    navigation.navigate("ForgotPassword");
-  }
-
+  const GoChangePassword = () => {
+    navigation.navigate('ForgotPassword');
+  };
 
   return (
     <>
-      {isLoading ? ( 
+      {isLoading ? (
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
           <ActivityIndicator size="large" color="#6A3EA1" />
         </View>
       ) : (
         <View style={styles.main}>
-        
           <ScrollView>
             <StatusBar
               barStyle="dark-content"
@@ -191,7 +185,7 @@ const Settings = () => {
               </View>
 
               <View style={{marginTop: 10}}>
-                {userInfog  ? (
+                {userInfog ? (
                   <Text style={styles.name}> {userInfog.name}</Text>
                 ) : (
                   <Text style={styles.name}> {userData.name}</Text>
@@ -204,7 +198,7 @@ const Settings = () => {
                     style={{marginTop: 3}}
                   />
                   <Text style={{fontSize: 12, color: '#827D89'}}>
-                    {userInfog? (
+                    {userInfog ? (
                       <Text> {userInfog.email}</Text>
                     ) : (
                       <Text> {userData.email}</Text>
@@ -230,45 +224,46 @@ const Settings = () => {
             <View style={styles.appSetting}>
               <Text style={styles.setting}>APP SETTINGS</Text>
             </View>
-<TouchableOpacity onPress={GoChangePassword}>
-
-            <View style={styles.parentlist}>
-              <View style={{display: 'flex', flexDirection: 'row'}}>
-                <IconF
-                  style={{marginRight: 8, marginTop: -5}}
-                  name="lock"
-                  size={25}
-                  color={'black'}
-                />
-                <Text style={styles.remainder}>Change Password</Text>
-              </View>
-              <View>
+            <TouchableOpacity onPress={GoChangePassword}>
+              <View style={styles.parentlist}>
                 <View style={{display: 'flex', flexDirection: 'row'}}>
-                  <IconMa
-                    style={{marginRight: 5}}
-                    name="arrow-forward-ios"
-                    size={16}
-                    color={'#827D89'}
+                  <IconF
+                    style={{marginRight: 8, marginTop: -5}}
+                    name="lock"
+                    size={25}
+                    color={'black'}
                   />
+                  <Text style={styles.remainder}>Change Password</Text>
+                </View>
+                <View>
+                  <View style={{display: 'flex', flexDirection: 'row'}}>
+                    <IconMa
+                      style={{marginRight: 5}}
+                      name="arrow-forward-ios"
+                      size={16}
+                      color={'#827D89'}
+                    />
+                  </View>
                 </View>
               </View>
-            </View>
-</TouchableOpacity>
-<TouchableOpacity>
-            <View style={styles.parentlist}>
-              <View style={{display: 'flex', flexDirection: 'row'}}>
-                <View style={{marginRight: 8, marginTop: -1}}>
-                  <Image source={require('../assects/images/text-size.png')} />
-                </View>
-                <Text style={styles.remainder}>Text Size</Text>
-              </View>
-              <View>
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <View style={styles.parentlist}>
                 <View style={{display: 'flex', flexDirection: 'row'}}>
-                  <Text style={styles.leftmenu}>Medium</Text>
+                  <View style={{marginRight: 8, marginTop: -1}}>
+                    <Image
+                      source={require('../assects/images/text-size.png')}
+                    />
+                  </View>
+                  <Text style={styles.remainder}>Text Size</Text>
+                </View>
+                <View>
+                  <View style={{display: 'flex', flexDirection: 'row'}}>
+                    <Text style={styles.leftmenu}>Medium</Text>
+                  </View>
                 </View>
               </View>
-            </View>
-</TouchableOpacity>
+            </TouchableOpacity>
 
             <TouchableOpacity onPress={toggleModal}>
               <View style={styles.parentlist}>

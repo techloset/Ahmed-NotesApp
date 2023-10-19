@@ -2,8 +2,6 @@ import {
   StyleSheet,
   Text,
   View,
-  Button,
-  Image,
   TouchableOpacity,
   Linking
 
@@ -16,9 +14,6 @@ import IconMa from 'react-native-vector-icons/MaterialIcons';
 import {useNavigation} from '@react-navigation/native';
 import Modal from 'react-native-modal';
 import Model from "../assects/images/model.svg"
-
-
-
 
 
 const openAlarmApp = () => {
@@ -284,7 +279,6 @@ function openLanguageSettings() {
         </Modal>
       </View>
 
-      {/* Menue Bar=========================================================== */}
       <View style={styles.menuBar}>
         <View style={styles.menuebarIcons}>
           <View>

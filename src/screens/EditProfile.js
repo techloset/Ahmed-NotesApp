@@ -16,7 +16,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {PermissionsAndroid} from 'react-native';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import { useNavigation} from '@react-navigation/native';
 import {
   fontPixel,
   heightPixel,
@@ -62,6 +62,7 @@ const EditProfile = () => {
     checkLoginStatus();
   }, []);
 
+
   const navigation = useNavigation();
   const handleSaveChanges = async () => {
     setLoading(true);
@@ -103,6 +104,7 @@ const EditProfile = () => {
     }
   };
 
+  
   const requestGalleryPermission = async () => {
     try {
       const granted = await PermissionsAndroid.request(

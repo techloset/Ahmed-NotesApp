@@ -1,17 +1,10 @@
 import React from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { NavigationContainer } from '@react-navigation/native';
-import Login from '../auth/Login';
-import OnboardingScreen from '../screens/OnboardingScreen';
-import Register from '../auth/Register';
 import Icons from 'react-native-vector-icons/FontAwesome6';
 import IconsM from 'react-native-vector-icons/MaterialCommunityIcons';
 import IconsE from 'react-native-vector-icons/Entypo';
 import IconsA from 'react-native-vector-icons/AntDesign';
-import IconsI from 'react-native-vector-icons/Ionicons';
 import IconsF from 'react-native-vector-icons/Feather';
-import ForgotPassword from '../auth/ForgotPassword';
-import CreateNewPassword from '../auth/CreateNewPassword';
 import HomeScreen from '../screens/HomeScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import FinishedScreen from '../screens/FinishedScreen';

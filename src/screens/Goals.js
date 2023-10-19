@@ -231,7 +231,6 @@ const Goals = () => {
     try {
       setLoading(true);
   
-      // Update the state optimistically before making the API request
       const updatedMainTaskList = mainTaskList.map((task) => {
         if (task.subtasks) {
           task.subtasks = task.subtasks.map((subtask) =>
@@ -243,7 +242,6 @@ const Goals = () => {
   
       setMainTaskList(updatedMainTaskList);
   
-      // Make the API request to update the checked status
       const response = await fetch(`https://notesapp-backend-omega.vercel.app/api/subtasks`, {
         method: 'PUT',
         headers: {

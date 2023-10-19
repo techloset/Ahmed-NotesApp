@@ -11,27 +11,35 @@ import Icons from 'react-native-vector-icons/MaterialIcons';
 import IconA from 'react-native-vector-icons/AntDesign';
 import NotesCard from '../constants/NotesCard';
 import BottomMenuBar from '../navigation/BottomMenuBar';
-import { useNavigation } from '@react-navigation/native';
-import { fontPixel, heightPixel, pixelSizeHorizontal, pixelSizeVertical, widthPixel } from '../constants/responsive';
+import {useNavigation} from '@react-navigation/native';
+import {
+  fontPixel,
+  heightPixel,
+  pixelSizeHorizontal,
+  pixelSizeVertical,
+  widthPixel,
+} from '../constants/responsive';
 const RoutineTasks = () => {
-const navigation = useNavigation()
-  const handlesubtask = () =>{
-    navigation.navigate("Goals")
-  }
+  const navigation = useNavigation();
+  const handlesubtask = () => {
+    navigation.navigate('Goals');
+  };
 
   return (
-    <View style={{flex:1}}>
-        <View style={styles.container}>
-          <View style={styles.header}>
-            <HeaderBack title="Back" />
-            <TouchableOpacity>
-              <View style={styles.SubBtn}>
-                <Text style={styles.subText} onPress={handlesubtask}>+ Add Sub Notes</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.line}></View>
+    <View style={{flex: 1}}>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <HeaderBack title="Back" />
+          <TouchableOpacity>
+            <View style={styles.SubBtn}>
+              <Text style={styles.subText} onPress={handlesubtask}>
+                + Add Sub Notes
+              </Text>
+            </View>
+          </TouchableOpacity>
         </View>
+        <View style={styles.line}></View>
+      </View>
       <ScrollView style={styles.main}>
         <View style={{paddingHorizontal: 20, marginTop: 20}}>
           <Text style={styles.activeSubNotes}>ACTIVE SUB NOTES</Text>
@@ -198,7 +206,7 @@ const styles = StyleSheet.create({
     // paddingHorizontal:16
   },
   container: {
-    backgroundColor:'white'
+    backgroundColor: 'white',
   },
   SubBtn: {
     backgroundColor: '#6A3EA1',

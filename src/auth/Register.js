@@ -15,8 +15,6 @@ import HeaderBack from '../components/HeaderBack';
 import Icon from 'react-native-vector-icons/FontAwesome6';
 import IconF from 'react-native-vector-icons/FontAwesome';
 import * as Yup from 'yup';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {ContextAuth} from './AuthContext';
 import {
   fontPixel,
   heightPixel,
@@ -47,7 +45,6 @@ const Register = () => {
   };
 
   const handleFieldFocus = fieldName => {
-    // Clear the error message when a field is focused
     setFieldErrors({...fieldErrors, [fieldName]: null});
   };
 
@@ -64,11 +61,7 @@ const Register = () => {
 
   const handleRegister = async () => {
     try {
-      // Validate the form data against the schema
       await validationSchema.validate(formData, {abortEarly: false});
-
-      // If validation succeeds
-
       handleSubmit();
     } catch (errors) {
       const errorMessages = {};

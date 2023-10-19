@@ -1,4 +1,4 @@
-import { Button, StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native'
+import {  StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native'
 import React from 'react'
 import HeaderBack from '../components/HeaderBack'
 import BottomMenuBar from '../navigation/BottomMenuBar'

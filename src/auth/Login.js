@@ -1,5 +1,4 @@
 import {
-  Image,
   StatusBar,
   StyleSheet,
   Text,
@@ -32,12 +31,10 @@ import Facebook from '../assects/images/facebook.svg';
 const Login = () => {
   const [loading, setloading] = useState(false);
   const [userData, setUserData] = useState(null);
-
   const [fieldErrors, setFieldErrors] = useState({
     email: null,
     password: null,
   });
-
   const [formData, setFormData] = useState({
     email: '',
     password: '',

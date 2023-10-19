@@ -1,13 +1,11 @@
-import React,{useContext, useEffect, useState} from 'react'
+import React,{ useEffect, useState} from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import Login from '../auth/Login';
 import OnboardingScreen from '../screens/OnboardingScreen';
 import Register from '../auth/Register';
-import Icon from 'react-native-vector-icons/FontAwesome6';
 import ForgotPassword from '../auth/ForgotPassword';
 import CreateNewPassword from '../auth/CreateNewPassword';
-import HomeScreen from '../screens/HomeScreen';
 import BottomTabNavigator from './BottomTabNavigator';
 import CreateNewNotes from '../screens/CreateNewNotes';
 import BuyingSomeThing from '../screens/BuyingSomeThing';
@@ -21,7 +19,6 @@ import Settings from '../screens/Settings';
 import EditProfile from '../screens/EditProfile';
 import ChangePassword from '../auth/ChangePassword';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import  { ContextAuth } from '../auth/AuthContext';
 import EmailCode from '../auth/EmailCode';
 import LoadingScreen from '../screens/LoadingScreen';
 
@@ -51,7 +48,6 @@ const StackNavigator = () => {
   }, []);
 
   if (loading) {
-    // Display a loader while loading
     return <LoadingScreen />;
   }
 
