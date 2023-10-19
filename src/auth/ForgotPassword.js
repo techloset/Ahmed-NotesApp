@@ -7,7 +7,7 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
-import React, {useContext, useState} from 'react';
+import React, { useState} from 'react';
 import HeaderBack from '../components/HeaderBack';
 import * as Yup from 'yup';
 import {useNavigation} from '@react-navigation/native';
@@ -42,9 +42,7 @@ const ForgotPassword = () => {
     try {
       await validateEmail.validate(email, {abortEarly: false});
 
-     const response = await fetch('https://notesapp-backend-omega.vercel.app/api/user/forgotPassword',{
-      cache: 'no-store'
-    }, {
+     const response = await fetch('https://notesapp-backend-omega.vercel.app/api/user/forgotPassword', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

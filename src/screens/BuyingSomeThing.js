@@ -36,18 +36,11 @@ const BuyingSomeThing = () => {
       setLoading(true);
       const response = await fetch(
         'https://notesapp-backend-omega.vercel.app/api/items/getItems',
-        {
-          cache: 'no-store',
-        },
-        {
-          cache: 'no-store',
-        },
+       
         {
           method: 'GET',
         },
-        {
-          cache: 'no-store',
-        },
+       
       );
       if (response.ok) {
         const data = await response.json();
@@ -70,9 +63,6 @@ const BuyingSomeThing = () => {
         setLoading(true);
         const response = await fetch(
           'https://notesapp-backend-omega.vercel.app/api/items/buyItemList',
-          {
-            cache: 'no-store',
-          },
           {
             method: 'POST',
             headers: {

@@ -76,9 +76,7 @@ const Register = () => {
     try {
       setloading(true);
       const response = await fetch(
-        'https://notesapp-backend-omega.vercel.app/api/user/signup',{
-          cache: 'no-store'
-        },
+        'https://notesapp-backend-omega.vercel.app/api/user/signup',
         {
           method: 'POST',
           headers: {

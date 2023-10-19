@@ -73,9 +73,7 @@ const EmailCode = () => {
       const code = code1 + code2 + code3 + code4;
       const responce = await fetch(
         'https://notesapp-backend-omega.vercel.app/api/user/verifycode',
-        {
-          cache: 'no-store',
-        },
+       
         {
           method: 'POST',
           headers: {'content-type': 'application/json'},

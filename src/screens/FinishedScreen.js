@@ -28,9 +28,7 @@ const FinishedScreen = () => {
         try {
           setLoading(true);
           const response = await fetch(
-            'https://notesapp-backend-omega.vercel.app/api/items/finisheditems',{
-              cache: 'no-store'
-            },
+            'https://notesapp-backend-omega.vercel.app/api/items/finisheditems',
             {
               method: 'GET',
               headers: {
@@ -60,9 +58,7 @@ const FinishedScreen = () => {
           setLoading(true);
           const response = await fetch(
             'https://notesapp-backend-omega.vercel.app/api/goalsItem/finishGoals',
-            {
-              cache: 'no-store'
-            },
+           
             {
               method: 'GET',
               headers: {

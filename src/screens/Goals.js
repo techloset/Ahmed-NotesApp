@@ -16,9 +16,14 @@ import BottomMenuBar from '../navigation/BottomMenuBar';
 const Goals = () => {
   const [newMainTask, setNewMainTask] = useState('');
   const [mainTaskList, setMainTaskList] = useState([]);
-  const [newSubTask, setNewSubTask] = useState('');
   const [loading, setLoading] = useState(false);
   const [subTaskInputs, setSubTaskInputs] = useState({});
+  
+
+   useEffect(() => {
+    fetchMainTasks();
+  }, [""]);
+
 
   const updateSubTaskInput = (mainTaskId, value) => {
     setSubTaskInputs({...subTaskInputs, [mainTaskId]: value});
@@ -44,7 +49,10 @@ const Goals = () => {
 
         if (response.ok) {
           const newMainTaskItem = await response.json();
-          setMainTaskList([...mainTaskList, newMainTaskItem]);
+          let array=mainTaskList
+          array.push(newMainTaskItem.mainTask)
+          // setMainTaskList([...mainTaskList, newMainTaskItem]);
+          setMainTaskList(array)
           setNewMainTask('');
         }
       } catch (error) {
@@ -55,7 +63,7 @@ const Goals = () => {
     }
   };
 
-  const handleAddSubtask = async mainTaskId => {
+  const handleAddSubtask = async (mainTaskId) => {
     if (subTaskInputs[mainTaskId] && subTaskInputs[mainTaskId].trim() !== '') {
       try {
         setLoading(true);
@@ -78,14 +86,15 @@ const Goals = () => {
           const newSubtaskItem = await response.json();
           const updatedMainTaskList = mainTaskList.map(task =>
             task.id === mainTaskId
-              ? {...task, subtasks: [...(task.subtasks || []), newSubtaskItem]}
+              ? {...task, subtasks: [...(task.subtasks || []), newSubtaskItem.subtask]}
               : task,
           );
           setMainTaskList(updatedMainTaskList);
+          // console.log(newSubtaskItem,"======================sub");
           updateSubTaskInput(mainTaskId, '');
         }
       } catch (error) {
-        console.error('Errorrrrrrrrrrrrrrrrrrrrr:', error);
+        console.error('Error:', error);
       } finally {
         setLoading(false);
       }
@@ -97,9 +106,7 @@ const Goals = () => {
       setLoading(true);
       const response = await fetch(
         'https://notesapp-backend-omega.vercel.app/api/maintasks',
-        {
-          cache: 'no-store',
-        },
+        
       );
       if (response.ok) {
         const data = await response.json();
@@ -128,9 +135,7 @@ const Goals = () => {
   };
 
 
-  useEffect(() => {
-    fetchMainTasks();
-  }, []);
+
 
   const handleDeleteMainTask = async mainTaskId => {
     const updatedMainTaskList = mainTaskList.filter(
@@ -153,15 +158,13 @@ const Goals = () => {
         console.log('Error');
       }
     } catch (error) {
-      console.error('Errossssssssssssssssr:', error);
+      console.error('Error:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDeleteSubtask = async subtaskId => {
-    // const updatedMainTaskList = mainTaskList.filter((task) => task.id !== subtaskId);
-    // setMainTaskList(updatedMainTaskList);
+  const handleDeleteSubtask = async (subtaskId) => {
     try {
       setLoading(true);
       const response = await fetch(
@@ -171,36 +174,41 @@ const Goals = () => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({id: subtaskId}),
+          body: JSON.stringify({ id: subtaskId }),
         },
       );
-
+  
       if (response.ok) {
-        setLoading(false);
-        // Remove the subtask from the state
+        // Remove the deleted subtask from the state
+        const updatedMainTaskList = mainTaskList.map((task) => {
+          if (task.subtasks) {
+            task.subtasks = task.subtasks.filter((subtask) => subtask.id !== subtaskId);
+          }
+          return task;
+        });
+  
+        setMainTaskList(updatedMainTaskList);
+  
         Toast.success('Item deleted');
       } else {
         console.error('Error deleting subtask');
       }
     } catch (error) {
       console.error('Error:', error);
-      setLoading(false);
     } finally {
       setLoading(false);
     }
   };
+  
 
-  const handleCheckboxChangeMainTask = async (mainTaskId, newValue, label) => {
+  const handleCheckboxChangeMainTask = async (mainTaskId, newValue) => {
     try {
       setLoading(true);
 
-      // Update the state optimistically before making the API request
       const updatedMainTaskList = mainTaskList.map(task =>
         task.id === mainTaskId ? {...task, checked: newValue} : task,
       );
       setMainTaskList(updatedMainTaskList);
-
-      // Make the API request to update the checked status
       const response = await fetch(
         `https://notesapp-backend-omega.vercel.app/api/maintasks`,
         {

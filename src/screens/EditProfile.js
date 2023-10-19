@@ -69,9 +69,7 @@ const EditProfile = () => {
     try {
       const response = await fetch(
         'https://notesapp-backend-omega.vercel.app/api/user/editProfile',
-        {
-          cache: 'no-store',
-        },
+      
         {
           method: 'POST',
           headers: {

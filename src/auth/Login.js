@@ -77,9 +77,6 @@ const Login = () => {
       const response = await fetch(
         'https://notesapp-backend-omega.vercel.app/api/user/signin',
         {
-          cache: 'no-store',
-        },
-        {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
